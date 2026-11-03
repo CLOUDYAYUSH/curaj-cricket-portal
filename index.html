@@ -31,16 +31,7 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration & Live Captains' Auction Hub 🏏</p>
-                
-                <div class="mt-5 flex gap-3 flex-wrap justify-center">
-                    <a href="#" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 py-2.5 rounded-full shadow-lg transition">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i> Join CPL Official WhatsApp Group
-                    </a>
-                    <button onclick="switchTab('captain-view')" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs px-5 py-2.5 rounded-full shadow-lg transition cursor-pointer">
-                        <i data-lucide="tv" class="w-4 h-4"></i> Captains' Live Screen View
-                    </button>
-                </div>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration, Live Auction, Player Status with Captains Live Screen View 🏏</p>
             </div>
         </header>
 
@@ -87,7 +78,7 @@
                                             <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Photo">
                                             <i id="photoIcon" data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
                                         </div>
-                                        <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon', 'prevCardPhotoBox')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
+                                        <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
                                     </div>
                                 </div>
                                 <div>
@@ -165,7 +156,7 @@
                         <div id="livePreviewContainer" class="bg-slate-900/95 rounded-2xl p-5 border border-slate-800 text-left space-y-4 shadow-inner">
                             <div class="flex items-center gap-4">
                                 <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
-                                    <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Preview">
+                                    <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Photo">
                                     <i id="prevCardPhotoIcon" data-lucide="user" class="w-8 h-8 text-slate-500"></i>
                                 </div>
                                 <div>
