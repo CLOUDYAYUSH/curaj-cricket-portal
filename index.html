@@ -31,7 +31,7 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration &  Auction Status🏏</p>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration & Auction Status 🏏</p>
                 
                 <div class="mt-5">
                     <a href="#" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 py-2.5 rounded-full shadow-lg transition">
@@ -206,7 +206,7 @@
             <div id="adminSection" class="hidden space-y-8 mt-6">
                 <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900 p-5 rounded-2xl border border-emerald-500/30 gap-4">
                     <div>
-                        <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase">🔒 Admin Control Panel</h3>
+                        <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase">🛡️ Admin Control Panel</h3>
                         <p class="text-xs text-slate-400">Manage all registered players, set Auction details, or toggle Registration Status.</p>
                     </div>
 
@@ -307,7 +307,25 @@
         <p>Designed & Developed with ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
     </footer>
 
-    <script>
+    <!-- Firebase SDK & Database Integration Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+        // Firebase Configuration Keys
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcuJVNX8nm2njXA8np46a3Xcis13xr4",
+            authDomain: "curaj-cricket-portal.firebaseapp.com",
+            projectId: "curaj-cricket-portal",
+            storageBucket: "curaj-cricket-portal.firebasestorage.app",
+            messagingSenderId: "18988312113",
+            appId: "1:18988312113:web:a877183b63891c4788d718",
+            measurementId: "G-YCOTJK65"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let studentPhotoData = '';
         let paymentPhotoData = '';
 
@@ -319,8 +337,8 @@
         });
 
         // REGISTRATION OPEN / CLOSE SYSTEM
-        function checkRegistrationStatus() {
-            const isOpen = localStorage.getItem('cpl_reg_status') !== 'closed'; // Open by default
+        window.checkRegistrationStatus = function() {
+            const isOpen = localStorage.getItem('cpl_reg_status') !== 'closed';
             const form = document.getElementById('registrationForm');
             const closedMsg = document.getElementById('closedMessage');
             const toggleBtn = document.getElementById('toggleRegBtn');
@@ -342,7 +360,7 @@
             }
         }
 
-        function toggleRegistrationStatus() {
+        window.toggleRegistrationStatus = function() {
             const currentStatus = localStorage.getItem('cpl_reg_status');
             if(currentStatus === 'closed') {
                 localStorage.setItem('cpl_reg_status', 'open');
@@ -354,7 +372,7 @@
             checkRegistrationStatus();
         }
 
-        function switchTab(tabName) {
+        window.switchTab = function(tabName) {
             ['registration', 'public-auction'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
                 document.getElementById(`tab-${t}`).classList.remove('border-emerald-500', 'text-emerald-400');
@@ -369,7 +387,7 @@
             }
         }
 
-        function previewFile(event, previewId, iconId) {
+        window.previewFile = function(event, previewId, iconId) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -384,17 +402,20 @@
             }
         }
 
-        function handleRegistration(e) {
+        // HANDLE REGISTRATION SUBMISSION TO FIRESTORE
+        window.handleRegistration = async function(e) {
             e.preventDefault();
             
-            // Re-verify if registration is open before processing
             if(localStorage.getItem('cpl_reg_status') === 'closed') {
                 alert('Sorry, registrations are currently closed!');
                 return;
             }
 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "Submitting to Database...";
+            submitBtn.disabled = true;
+
             const playerData = {
-                id: Date.now(),
                 photo: studentPhotoData || 'https://via.placeholder.com/100',
                 paymentPhoto: paymentPhotoData || '',
                 fullName: document.getElementById('fullName').value,
@@ -407,36 +428,45 @@
                 style: document.getElementById('playingStyle').value,
                 auctionStatus: 'Pending',
                 soldTeam: '-',
-                bidPrice: '0'
+                bidPrice: '0',
+                createdAt: new Date().toISOString()
             };
 
-            let players = JSON.parse(localStorage.getItem('cpl_players')) || [];
-            players.push(playerData);
-            localStorage.setItem('cpl_players', JSON.stringify(players));
+            try {
+                await addDoc(collection(db, "registrations"), playerData);
 
-            // Update Live Preview Card
-            document.getElementById('prevCardPhotoBox').innerHTML = `<img src="${playerData.photo}" class="w-full h-full object-cover">`;
-            document.getElementById('prevCardName').innerText = playerData.fullName;
-            document.getElementById('prevCardId').innerText = playerData.studentId;
-            document.getElementById('prevCardDept').innerText = playerData.department;
-            document.getElementById('prevCardRole').innerText = playerData.role;
-            document.getElementById('prevCardStyle').innerText = playerData.style;
-            document.getElementById('prevCardHostel').innerText = playerData.hostel;
-            document.getElementById('prevCardMobile').innerText = playerData.mobile;
-            document.getElementById('prevCardUtr').innerText = playerData.utrNo;
+                // Update Live Preview Card
+                document.getElementById('prevCardPhotoBox').innerHTML = `<img src="${playerData.photo}" class="w-full h-full object-cover">`;
+                document.getElementById('prevCardName').innerText = playerData.fullName;
+                document.getElementById('prevCardId').innerText = playerData.studentId;
+                document.getElementById('prevCardDept').innerText = playerData.department;
+                document.getElementById('prevCardRole').innerText = playerData.role;
+                document.getElementById('prevCardStyle').innerText = playerData.style;
+                document.getElementById('prevCardHostel').innerText = playerData.hostel;
+                document.getElementById('prevCardMobile').innerText = playerData.mobile;
+                document.getElementById('prevCardUtr').innerText = playerData.utrNo;
 
-            alert('Registration completed successfully!');
-            document.getElementById('registrationForm').reset();
-            studentPhotoData = '';
-            paymentPhotoData = '';
-            document.getElementById('photoPreview').classList.add('hidden');
-            document.getElementById('photoIcon').classList.remove('hidden');
-            document.getElementById('paymentPreview').classList.add('hidden');
-            document.getElementById('paymentIcon').classList.remove('hidden');
-            loadPlayers();
+                alert('Registration completed & saved to Firebase successfully!');
+                document.getElementById('registrationForm').reset();
+                studentPhotoData = '';
+                paymentPhotoData = '';
+                document.getElementById('photoPreview').classList.add('hidden');
+                document.getElementById('photoIcon').classList.remove('hidden');
+                document.getElementById('paymentPreview').classList.add('hidden');
+                document.getElementById('paymentIcon').classList.remove('hidden');
+                
+                loadPlayers();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Error saving registration. Please check your internet connection.");
+            } finally {
+                submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
+                submitBtn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
-        function showAdmin() {
+        window.showAdmin = function() {
             const pass = prompt('Enter Admin Password:');
             if(pass === 'admin123') {
                 document.getElementById('adminSection').classList.remove('hidden');
@@ -448,164 +478,195 @@
             }
         }
 
-        function hideAdmin() {
+        window.hideAdmin = function() {
             document.getElementById('adminSection').classList.add('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function loadPlayers() {
-            const players = JSON.parse(localStorage.getItem('cpl_players')) || [];
+        // LOAD PLAYERS FROM FIRESTORE FOR ADMIN PANEL
+        window.loadPlayers = async function() {
             const tbody = document.getElementById('playerTableBody');
-            
-            let total = players.length;
-            let soldCount = players.filter(p => p.auctionStatus === 'Sold').length;
-            let unsoldCount = players.filter(p => p.auctionStatus === 'Unsold').length;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading registrations from database...</td></tr>`;
 
-            if(document.getElementById('statTotal')) {
-                document.getElementById('statTotal').innerText = total;
-                document.getElementById('statSold').innerText = soldCount;
-                document.getElementById('statUnsold').innerText = unsoldCount;
-            }
-            
-            if (players.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">No registrations found yet.</td></tr>`;
-                return;
-            }
+            try {
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                let players = [];
+                querySnapshot.forEach((docSnap) => {
+                    players.push({ docId: docSnap.id, ...docSnap.data() });
+                });
+                
+                let total = players.length;
+                let soldCount = players.filter(p => p.auctionStatus === 'Sold').length;
+                let unsoldCount = players.filter(p => p.auctionStatus === 'Unsold').length;
 
-            tbody.innerHTML = players.map(p => `
-                <tr class="border-b border-slate-800/60 hover:bg-slate-900/40">
-                    <td class="p-3" onclick="openAuctionModal(${p.id})"><img src="${p.photo}" class="w-10 h-10 rounded-lg object-cover border border-emerald-500/30 cursor-pointer"></td>
-                    <td class="p-3 cursor-pointer" onclick="openAuctionModal(${p.id})"><div class="font-bold text-white">${p.fullName}</div><div class="text-xs text-slate-400">${p.studentId}</div></td>
-                    <td class="p-3 text-slate-300 text-xs cursor-pointer" onclick="openAuctionModal(${p.id})">${p.department}<br><span class="text-slate-400">${p.hostel}</span></td>
-                    <td class="p-3 cursor-pointer" onclick="openAuctionModal(${p.id})"><span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded border border-emerald-500/20">${p.role}</span></td>
-                    <td class="p-3 cursor-pointer" onclick="openAuctionModal(${p.id})">
-                        <span class="font-bold text-xs px-2.5 py-1 rounded-full ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700'}">
-                            ${p.auctionStatus} ${p.soldTeam !== '-' ? '('+p.soldTeam+' - ₹'+p.bidPrice+')' : ''}
-                        </span>
-                    </td>
-                    <td class="p-3 text-center space-x-2">
-                        <button onclick="openAuctionModal(${p.id})" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700 cursor-pointer">Edit</button>
-                        <button onclick="deletePlayer(${p.id})" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-red-500/30 cursor-pointer transition">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+                if(document.getElementById('statTotal')) {
+                    document.getElementById('statTotal').innerText = total;
+                    document.getElementById('statSold').innerText = soldCount;
+                    document.getElementById('statUnsold').innerText = unsoldCount;
+                }
+                
+                if (players.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">No registrations found in database yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = players.map(p => `
+                    <tr class="border-b border-slate-800/60 hover:bg-slate-900/40">
+                        <td class="p-3" onclick="openAuctionModal('${p.docId}')"><img src="${p.photo}" class="w-10 h-10 rounded-lg object-cover border border-emerald-500/30 cursor-pointer"></td>
+                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')"><div class="font-bold text-white">${p.fullName}</div><div class="text-xs text-slate-400">${p.studentId}</div></td>
+                        <td class="p-3 text-slate-300 text-xs cursor-pointer" onclick="openAuctionModal('${p.docId}')">${p.department}<br><span class="text-slate-400">${p.hostel}</span></td>
+                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')"><span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded border border-emerald-500/20">${p.role}</span></td>
+                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
+                                p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
+                                'bg-slate-800 text-slate-400 border border-slate-700'
+                            }">
+                                ${p.auctionStatus}${p.auctionStatus === 'Sold' ? ` (${p.soldTeam} - ₹${p.bidPrice})` : ''}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="openAuctionModal('${p.docId}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2.5 py-1 rounded text-xs transition cursor-pointer">Edit</button>
+                            <button onclick="deletePlayer('${p.docId}')" class="bg-red-500/20 text-red-400 hover:bg-red-500/30 px-2.5 py-1 rounded text-xs transition cursor-pointer">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+                window.cachedPlayers = players;
+            } catch (error) {
+                console.error("Error loading players: ", error);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-red-400">Failed to load data from Firebase.</td></tr>`;
+            }
         }
 
-        function deletePlayer(id) {
-            if(confirm('Are you sure you want to delete this player permanently?')) {
-                let players = JSON.parse(localStorage.getItem('cpl_players')) || [];
-                players = players.filter(p => p.id !== id);
-                localStorage.setItem('cpl_players', JSON.stringify(players));
-                loadPlayers();
-                loadPublicAuction();
-            }
-        }
-
-        function loadPublicAuction() {
-            const players = JSON.parse(localStorage.getItem('cpl_players')) || [];
+        // LOAD PUBLIC AUCTION HUB
+        window.loadPublicAuction = async function() {
             const grid = document.getElementById('publicAuctionGrid');
-            
-            const updatedPlayers = players.filter(p => p.auctionStatus === 'Sold' || p.auctionStatus === 'Unsold');
+            grid.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400">Loading auction status...</div>`;
 
-            if(updatedPlayers.length === 0) {
-                grid.innerHTML = `<p class="text-slate-500 col-span-3 text-center py-10">No auction results announced yet.</p>`;
-                return;
-            }
+            try {
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                let players = [];
+                querySnapshot.forEach((docSnap) => {
+                    players.push({ docId: docSnap.id, ...docSnap.data() });
+                });
 
-            grid.innerHTML = updatedPlayers.map(p => `
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="${p.photo}" class="w-16 h-16 rounded-xl object-cover border-2 border-emerald-500/50 shrink-0">
+                // Show only Sold or Unsold players to the public
+                const activePlayers = players.filter(p => p.auctionStatus === 'Sold' || p.auctionStatus === 'Unsold');
+
+                if (activePlayers.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12 space-y-3">
+                            <i data-lucide="gavel" class="w-12 h-12 text-slate-600 mx-auto"></i>
+                            <h3 class="text-lg font-bold text-slate-300">Auction is in progress or yet to start!</h3>
+                            <p class="text-xs text-slate-500">Check back soon as players are updated by the auctioneers.</p>
+                        </div>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                grid.innerHTML = activePlayers.map(p => `
+                    <div class="bg-slate-900 border ${p.auctionStatus === 'Sold' ? 'border-emerald-500/40' : 'border-amber-500/40'} rounded-2xl p-5 shadow-lg space-y-4">
+                        <div class="flex items-center gap-4">
+                            <img src="${p.photo}" class="w-16 h-16 rounded-xl object-cover border border-slate-700 shrink-0">
                             <div>
-                                <h4 class="font-bold text-white text-base">${p.fullName}</h4>
-                                <p class="text-xs text-emerald-400 font-medium">${p.role}</p>
-                                <p class="text-xs text-slate-400">${p.department}</p>
+                                <h4 class="font-bold text-white text-lg">${p.fullName}</h4>
+                                <p class="text-xs text-emerald-400">${p.department}</p>
+                                <span class="inline-block mt-1 bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded border border-slate-700">${p.role}</span>
                             </div>
                         </div>
-
-                        <div class="bg-slate-950/80 rounded-xl p-3.5 text-xs space-y-2 border border-slate-800">
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-400">Status:</span>
-                                <span class="font-bold px-2.5 py-0.5 rounded-full ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">${p.auctionStatus}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Team:</span>
-                                <span class="text-white font-semibold">${p.soldTeam}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Bid Price:</span>
-                                <span class="text-emerald-300 font-semibold">₹${p.bidPrice}</span>
-                            </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
+                            <div class="flex justify-between"><span class="text-slate-400">Status:</span> <span class="font-bold ${p.auctionStatus === 'Sold' ? 'text-emerald-400' : 'text-amber-400'}">${p.auctionStatus}</span></div>
+                            ${p.auctionStatus === 'Sold' ? `
+                                <div class="flex justify-between"><span class="text-slate-400">Team:</span> <span class="text-white font-semibold">${p.soldTeam}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-400">Winning Bid:</span> <span class="text-emerald-300 font-bold">₹${p.bidPrice}</span></div>
+                            ` : ''}
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+                lucide.createIcons();
+            } catch (error) {
+                console.error("Error loading public auction:", error);
+                grid.innerHTML = `<div class="col-span-3 text-center py-10 text-red-400">Failed to load auction hub.</div>`;
+            }
         }
 
-        function openAuctionModal(id) {
-            const players = JSON.parse(localStorage.getItem('cpl_players')) || [];
-            const player = players.find(p => p.id === id);
+        window.openAuctionModal = function(docId) {
+            const player = window.cachedPlayers.find(p => p.docId === docId);
             if(!player) return;
 
-            document.getElementById('modalPlayerId').value = player.id;
+            document.getElementById('modalPlayerId').value = docId;
             document.getElementById('modalStatus').value = player.auctionStatus;
             document.getElementById('modalTeam').value = player.soldTeam !== '-' ? player.soldTeam : '';
             document.getElementById('modalPrice').value = player.bidPrice !== '0' ? player.bidPrice : '';
 
             document.getElementById('modalPlayerInfo').innerHTML = `
-                <img src="${player.photo}" class="w-12 h-12 rounded-lg object-cover border border-emerald-500/40">
+                <img src="${player.photo}" class="w-12 h-12 rounded-lg object-cover">
                 <div>
                     <h4 class="font-bold text-white text-sm">${player.fullName}</h4>
-                    <p class="text-xs text-emerald-400">${player.role} • ${player.department}</p>
+                    <p class="text-xs text-emerald-400">${player.studentId} • ${player.role}</p>
                 </div>
             `;
-
             document.getElementById('auctionModal').classList.remove('hidden');
         }
 
-        function closeModal() {
+        window.closeModal = function() {
             document.getElementById('auctionModal').classList.add('hidden');
         }
 
-        function saveModalAuction() {
-            const id = Number(document.getElementById('modalPlayerId').value);
+        // SAVE MODAL AUCTION DETAILS TO FIRESTORE
+        window.saveModalAuction = async function() {
+            const docId = document.getElementById('modalPlayerId').value;
             const status = document.getElementById('modalStatus').value;
-            const team = document.getElementById('modalTeam').value;
-            const price = document.getElementById('modalPrice').value;
+            const team = document.getElementById('modalTeam').value || '-';
+            const price = document.getElementById('modalPrice').value || '0';
 
-            let players = JSON.parse(localStorage.getItem('cpl_players')) || [];
-            players = players.map(p => {
-                if(p.id === id) {
-                    p.auctionStatus = status;
-                    p.soldTeam = status === 'Sold' ? (team || 'CURAJ Mavericks') : '-';
-                    p.bidPrice = status === 'Sold' ? (price || '500') : '0';
-                }
-                return p;
-            });
+            try {
+                const playerRef = doc(db, "registrations", docId);
+                await updateDoc(playerRef, {
+                    auctionStatus: status,
+                    soldTeam: status === 'Sold' ? team : '-',
+                    bidPrice: status === 'Sold' ? price : '0'
+                });
 
-            localStorage.setItem('cpl_players', JSON.stringify(players));
-            closeModal();
-            loadPlayers();
-            loadPublicAuction();
+                closeModal();
+                loadPlayers();
+                alert('Auction details updated successfully in Firebase!');
+            } catch (error) {
+                console.error("Error updating document: ", error);
+                alert("Failed to update auction details.");
+            }
         }
 
-        function exportCSV() {
-            const players = JSON.parse(localStorage.getItem('cpl_players')) || [];
-            if (players.length === 0) {
-                alert('No data available to export.');
+        // DELETE PLAYER FROM FIRESTORE
+        window.deletePlayer = async function(docId) {
+            if(confirm('Are you sure you want to permanently delete this registration?')) {
+                try {
+                    await deleteDoc(doc(db, "registrations", docId));
+                    loadPlayers();
+                    alert('Registration deleted successfully!');
+                } catch (error) {
+                    console.error("Error deleting document: ", error);
+                    alert("Failed to delete registration.");
+                }
+            }
+        }
+
+        window.exportCSV = function() {
+            const players = window.cachedPlayers || [];
+            if(players.length === 0) {
+                alert('No data to export!');
                 return;
             }
-            let csv = "Name,StudentID,Department,Hostel,UTR,Role,Mobile,AuctionStatus,SoldTeam,BidPrice\n";
-            players.forEach(p => { 
-                csv += `"${p.fullName}","${p.studentId}","${p.department}","${p.hostel}","${p.utrNo}","${p.role}","${p.mobile}","${p.auctionStatus}","${p.soldTeam}","${p.bidPrice}"\n`; 
+            let csv = 'Full Name,Student ID,Department,Mobile,Hostel,UTR No,Role,Style,Status,Team,Bid Price\n';
+            players.forEach(p => {
+                csv += `"${p.fullName}","${p.studentId}","${p.department}","${p.mobile}","${p.hostel}","${p.utrNo}","${p.role}","${p.style}","${p.auctionStatus}","${p.soldTeam}","${p.bidPrice}"\n`;
             });
-            const link = document.createElement("a");
-            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-            link.download = "CURAJ_Cricket_Registrations.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'CPL_Registered_Players.csv');
+            a.click();
         }
     </script>
 </body>
