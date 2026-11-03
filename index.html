@@ -87,7 +87,7 @@
                                             <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Photo">
                                             <i id="photoIcon" data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
                                         </div>
-                                        <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
+                                        <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon', 'prevCardPhotoBox')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
                                     </div>
                                 </div>
                                 <div>
@@ -105,40 +105,40 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Full Name *</label>
-                                    <input type="text" id="fullName" required placeholder="e.g. Ayush Gupta" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="fullName" required oninput="updatePreview()" placeholder="e.g. Ayush Gupta" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Student ID / Enrollment No *</label>
-                                    <input type="text" id="studentId" required placeholder="e.g. 2024CURAJ..." class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="studentId" required oninput="updatePreview()" placeholder="e.g. 2024CURAJ..." class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Department *</label>
-                                    <input type="text" id="department" required placeholder="e.g. Computer Science" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="department" required oninput="updatePreview()" placeholder="e.g. Computer Science" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">WhatsApp Number *</label>
-                                    <input type="tel" id="mobile" required placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="tel" id="mobile" required oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Hostel Name & Room No *</label>
-                                    <input type="text" id="hostel" required placeholder="e.g. B-4, Room 204" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="hostel" required oninput="updatePreview()" placeholder="e.g. B-4, Room 204" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">UPI Transaction ID / UTR *</label>
-                                    <input type="text" id="utrNo" required placeholder="e.g. 4298xxxxxxxx" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="utrNo" required oninput="updatePreview()" placeholder="e.g. 4298xxxxxxxx" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Primary Role *</label>
-                                    <select id="cricketRole" required class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <select id="cricketRole" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                         <option value="Batsman">Batsman</option>
                                         <option value="Bowler">Bowler</option>
                                         <option value="All-Rounder">All-Rounder</option>
@@ -147,7 +147,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Playing Style *</label>
-                                    <input type="text" id="playingStyle" required placeholder="Right Hand Bat / Fast" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="text" id="playingStyle" required oninput="updatePreview()" placeholder="Right Hand Bat / Fast" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                             </div>
 
@@ -165,7 +165,8 @@
                         <div id="livePreviewContainer" class="bg-slate-900/95 rounded-2xl p-5 border border-slate-800 text-left space-y-4 shadow-inner">
                             <div class="flex items-center gap-4">
                                 <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
-                                    <i data-lucide="user" class="w-8 h-8 text-slate-500"></i>
+                                    <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Preview">
+                                    <i id="prevCardPhotoIcon" data-lucide="user" class="w-8 h-8 text-slate-500"></i>
                                 </div>
                                 <div>
                                     <h4 id="prevCardName" class="font-bold text-white text-lg">Not Submitted Yet</h4>
@@ -174,7 +175,7 @@
                             </div>
                             <div class="text-sm space-y-2 text-slate-300 border-t border-slate-800 pt-3">
                                 <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">Batsman</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Style:</strong> <span id="prevCardStyle" class="text-white">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white">-</span></div>
@@ -495,19 +496,47 @@
             }
         });
 
+        // PREVIEW FILE & REALTIME FORM PREVIEW UPDATE
         window.previewFile = function(event, previewId, iconId) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    if(previewId === 'photoPreview') studentPhotoData = e.target.result;
-                    if(previewId === 'paymentPreview') paymentPhotoData = e.target.result;
+                    if(previewId === 'photoPreview') {
+                        studentPhotoData = e.target.result;
+                        document.getElementById('prevCardPhotoImg').src = e.target.result;
+                        document.getElementById('prevCardPhotoImg').classList.remove('hidden');
+                        document.getElementById('prevCardPhotoIcon').classList.add('hidden');
+                    }
+                    if(previewId === 'paymentPreview') {
+                        paymentPhotoData = e.target.result;
+                    }
                     document.getElementById(previewId).src = e.target.result;
                     document.getElementById(previewId).classList.remove('hidden');
                     document.getElementById(iconId).classList.add('hidden');
                 }
                 reader.readAsDataURL(file);
             }
+        }
+
+        window.updatePreview = function() {
+            const name = document.getElementById('fullName').value.trim();
+            const id = document.getElementById('studentId').value.trim();
+            const dept = document.getElementById('department').value.trim();
+            const role = document.getElementById('cricketRole').value;
+            const style = document.getElementById('playingStyle').value.trim();
+            const hostel = document.getElementById('hostel').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const utr = document.getElementById('utrNo').value.trim();
+
+            document.getElementById('prevCardName').innerText = name || "Not Submitted Yet";
+            document.getElementById('prevCardId').innerText = id || "Enrollment ID";
+            document.getElementById('prevCardDept').innerText = dept || "-";
+            document.getElementById('prevCardRole').innerText = role || "-";
+            document.getElementById('prevCardStyle').innerText = style || "-";
+            document.getElementById('prevCardHostel').innerText = hostel || "-";
+            document.getElementById('prevCardMobile').innerText = mobile || "-";
+            document.getElementById('prevCardUtr').innerText = utr || "-";
         }
 
         window.handleRegistration = async function(e) {
@@ -542,12 +571,18 @@
                 await addDoc(collection(db, "registrations"), playerData);
                 alert('Registration completed & saved to Firebase successfully!');
                 document.getElementById('registrationForm').reset();
+                
+                // Reset preview card & photos
                 studentPhotoData = '';
                 paymentPhotoData = '';
                 document.getElementById('photoPreview').classList.add('hidden');
                 document.getElementById('photoIcon').classList.remove('hidden');
                 document.getElementById('paymentPreview').classList.add('hidden');
                 document.getElementById('paymentIcon').classList.remove('hidden');
+                document.getElementById('prevCardPhotoImg').classList.add('hidden');
+                document.getElementById('prevCardPhotoIcon').classList.remove('hidden');
+                updatePreview();
+
                 loadPlayers();
             } catch (error) {
                 console.error("Error adding document: ", error);
