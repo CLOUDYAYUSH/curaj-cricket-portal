@@ -373,7 +373,7 @@
             checkRegistrationStatus();
             loadPlayers();
             loadPublicAuction();
-            listenToLiveBroadcast(); // CAPTAINS' REALTIME LISTENER
+            listenToLiveBroadcast();
         });
 
         // REGISTRATION STATUS
@@ -384,15 +384,15 @@
             const toggleBtn = document.getElementById('toggleRegBtn');
 
             if(isOpen) {
-                form.classList.remove('hidden');
-                closedMsg.classList.add('hidden');
+                if(form) form.classList.remove('hidden');
+                if(closedMsg) closedMsg.classList.add('hidden');
                 if(toggleBtn) {
                     toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
                     toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> OPEN (Click to Close)`;
                 }
             } else {
-                form.classList.add('hidden');
-                closedMsg.classList.remove('hidden');
+                if(form) form.classList.add('hidden');
+                if(closedMsg) closedMsg.classList.remove('hidden');
                 if(toggleBtn) {
                     toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40";
                     toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> CLOSED (Click to Open)`;
@@ -442,9 +442,11 @@
         // MASKED PASSWORD MODAL FUNCTIONS (STAR DISPLAY)
         window.showAdminPasswordModal = function() {
             showPasswordModal("Admin Login", "Enter Admin Password:", "ADMIN_AYUSH6200", () => {
-                document.getElementById('adminSection').classList.remove('hidden');
-                document.getElementById('adminAccessBtnContainer').classList.add('hidden'); // Hides bottom button when admin is logged in
-                window.scrollTo({top: document.getElementById('adminSection').offsetTop, behavior: 'smooth'});
+                const adminSec = document.getElementById('adminSection');
+                const btnContainer = document.getElementById('adminAccessBtnContainer');
+                if(adminSec) adminSec.classList.remove('hidden');
+                if(btnContainer) btnContainer.classList.add('hidden'); // Hides bottom button when admin is logged in
+                window.scrollTo({top: adminSec.offsetTop, behavior: 'smooth'});
                 checkRegistrationStatus();
                 loadPlayers();
             });
@@ -465,15 +467,19 @@
         }
 
         window.verifyPassword = function() {
-            const enteredVal = document.getElementById('modalPasswordInput').value;
+            const inputEl = document.getElementById('modalPasswordInput');
+            const enteredVal = inputEl ? inputEl.value.trim() : '';
+            
             if(currentAuthCallback && enteredVal === currentAuthCallback.correctPass) {
                 const cb = currentAuthCallback.callback;
                 closePasswordModal();
                 cb();
             } else {
-                alert('Incorrect Password!');
-                document.getElementById('modalPasswordInput').value = '';
-                document.getElementById('modalPasswordInput').focus();
+                alert('Incorrect Password! Please try again.');
+                if(inputEl) {
+                    inputEl.value = '';
+                    inputEl.focus();
+                }
             }
         }
 
@@ -554,8 +560,10 @@
         }
 
         window.hideAdmin = function() {
-            document.getElementById('adminSection').classList.add('hidden');
-            document.getElementById('adminAccessBtnContainer').classList.remove('hidden'); // Shows bottom button again when admin closes panel
+            const adminSec = document.getElementById('adminSection');
+            const btnContainer = document.getElementById('adminAccessBtnContainer');
+            if(adminSec) adminSec.classList.add('hidden');
+            if(btnContainer) btnContainer.classList.remove('hidden'); // Shows bottom button again when admin closes panel
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
@@ -642,16 +650,21 @@
                     const photoEl = document.getElementById('captainPlayerPhoto');
                     const placeholderEl = document.getElementById('captainPhotoPlaceholder');
                     
-                    if(player.photo) {
+                    if(player.photo && photoEl && placeholderEl) {
                         photoEl.src = player.photo;
                         photoEl.classList.remove('hidden');
                         placeholderEl.classList.add('hidden');
                     }
 
-                    document.getElementById('captainPlayerName').innerText = player.fullName || "Unknown Player";
-                    document.getElementById('captainPlayerMeta').innerText = `${player.department || ''} • ${player.role || ''}`;
-                    document.getElementById('captainPlayerStyle').innerText = player.style || '-';
-                    document.getElementById('captainPlayerStatus').innerText = player.auctionStatus || 'Pending';
+                    const nameEl = document.getElementById('captainPlayerName');
+                    const metaEl = document.getElementById('captainPlayerMeta');
+                    const styleEl = document.getElementById('captainPlayerStyle');
+                    const statusEl = document.getElementById('captainPlayerStatus');
+
+                    if(nameEl) nameEl.innerText = player.fullName || "Unknown Player";
+                    if(metaEl) metaEl.innerText = `${player.department || ''} • ${player.role || ''}`;
+                    if(styleEl) styleEl.innerText = player.style || '-';
+                    if(statusEl) statusEl.innerText = player.auctionStatus || 'Pending';
                 }
             });
         }
