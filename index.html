@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CURAJ Premier League - Student Portal</title>
+    <title>CURAJ Premier League - Student Portal & Live Auction</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -22,7 +22,7 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-12 flex flex-col justify-between">
 
     <div>
-        <!-- Header / Banner with Crystal Clear University Background Image -->
+        <!-- Header / Banner -->
         <header class="relative border-b border-sky-500/30 py-20 px-4 text-center overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center opacity-85" style="background-image: url('https://cdn.collegewollege.com/storage/colleges/branding/ZEQgdsCVJhnDJaziqGDr6ZYdfCs6MgvGrO3pXrHd.webp');"></div>
             <div class="absolute inset-0 bg-slate-950/25"></div>
@@ -31,17 +31,20 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration & Auction Status 🏏</p>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL Registration & Live Captains' Auction Hub 🏏</p>
                 
-                <div class="mt-5">
+                <div class="mt-5 flex gap-3 flex-wrap justify-center">
                     <a href="#" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 py-2.5 rounded-full shadow-lg transition">
                         <i data-lucide="message-circle" class="w-4 h-4"></i> Join CPL Official WhatsApp Group
                     </a>
+                    <button onclick="switchTab('captain-view')" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs px-5 py-2.5 rounded-full shadow-lg transition cursor-pointer">
+                        <i data-lucide="tv" class="w-4 h-4"></i> Captains' Live Screen View
+                    </button>
                 </div>
             </div>
         </header>
 
-        <!-- Navigation Tabs (Publicly Visible) -->
+        <!-- Navigation Tabs -->
         <nav class="max-w-6xl mx-auto px-4 mt-6">
             <div class="flex border-b border-slate-800 gap-4 overflow-x-auto justify-center">
                 <button onclick="switchTab('registration')" id="tab-registration" class="py-3 px-6 text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 cursor-pointer transition">
@@ -49,6 +52,9 @@
                 </button>
                 <button onclick="switchTab('public-auction')" id="tab-public-auction" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
                     <i data-lucide="gavel" class="w-4 h-4"></i> Auction Status Hub
+                </button>
+                <button onclick="switchTab('captain-view')" id="tab-captain-view" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                    <i data-lucide="monitor-play" class="w-4 h-4"></i> Captains' Screen
                 </button>
             </div>
         </nav>
@@ -60,23 +66,20 @@
             <div id="section-registration" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-7">
                     <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative">
-                        
                         <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-6 border-b border-slate-800 pb-3">
                             <i data-lucide="clipboard-list"></i> CPL Player Registration
                         </h2>
 
-                        <!-- REGISTRATION CLOSED MESSAGE BANNER -->
+                        <!-- REGISTRATION CLOSED BANNER -->
                         <div id="closedMessage" class="hidden bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-8 text-center my-6 space-y-3">
                             <i data-lucide="lock" class="w-12 h-12 text-amber-400 mx-auto"></i>
                             <h3 class="text-2xl font-bold text-amber-400 font-cricket uppercase tracking-wide">Registrations Are Currently Closed!</h3>
-                            <p class="text-sm text-slate-300">The CPL team has currently closed the registration portal. Please contact the tournament organizers or check back later.</p>
+                            <p class="text-sm text-slate-300">The CPL team has currently closed the registration portal.</p>
                         </div>
 
                         <!-- REGISTRATION FORM -->
                         <form id="registrationForm" onsubmit="handleRegistration(event)" class="space-y-5">
-                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Student Photo -->
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Student Photo *</label>
                                     <div class="flex items-center gap-3">
@@ -87,8 +90,6 @@
                                         <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
                                     </div>
                                 </div>
-
-                                <!-- Payment Screenshot -->
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Payment Screenshot *</label>
                                     <div class="flex items-center gap-3">
@@ -195,9 +196,32 @@
                             <p class="text-xs text-slate-400">Official live player auction records and team details.</p>
                         </div>
                     </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="publicAuctionGrid"></div>
+                </div>
+            </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="publicAuctionGrid">
-                        <!-- Loaded dynamically via JS -->
+            <!-- TAB 3: CAPTAINS' LIVE BROADCAST SCREEN -->
+            <div id="section-captain-view" class="hidden space-y-6">
+                <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-sky-500/40 text-center max-w-3xl mx-auto">
+                    <div class="inline-block bg-sky-500/20 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border border-sky-500/30 animate-pulse">
+                        🔴 Live Auction Broadcast (Captains' Screen)
+                    </div>
+
+                    <div id="captainLiveDisplay" class="space-y-6">
+                        <div class="w-40 h-40 md:w-52 md:h-52 mx-auto rounded-2xl bg-slate-900 border-4 border-emerald-500/60 shadow-2xl overflow-hidden flex items-center justify-center">
+                            <img id="captainPlayerPhoto" src="" alt="Player Photo" class="w-full h-full object-cover hidden">
+                            <i id="captainPhotoPlaceholder" data-lucide="user" class="w-16 h-16 text-slate-600"></i>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 id="captainPlayerName" class="text-3xl md:text-5xl font-extrabold font-cricket uppercase text-white tracking-wide">Waiting for Admin to Broadcast...</h2>
+                            <p id="captainPlayerMeta" class="text-emerald-400 font-semibold text-lg">Department & Role will appear here instantly</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-left text-sm">
+                            <div><span class="text-slate-400 block text-xs">Playing Style:</span> <strong id="captainPlayerStyle" class="text-white">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs">Auction Status:</span> <strong id="captainPlayerStatus" class="text-amber-400">-</strong></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -207,14 +231,12 @@
                 <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900 p-5 rounded-2xl border border-emerald-500/30 gap-4">
                     <div>
                         <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase">🛡️ Admin Control Panel</h3>
-                        <p class="text-xs text-slate-400">Manage all registered players, set Auction details, or toggle Registration Status.</p>
+                        <p class="text-xs text-slate-400">Manage registrations, broadcast players to captains, and update bidding statuses.</p>
                     </div>
 
-                    <!-- REGISTRATION OPEN/CLOSE TOGGLE SWITCH IN ADMIN PANEL -->
                     <div class="flex items-center gap-3 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
                         <span class="text-xs font-semibold text-slate-300">Registration Portal:</span>
                         <button id="toggleRegBtn" onclick="toggleRegistrationStatus()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                            <!-- Populated dynamically via JS -->
                         </button>
                     </div>
 
@@ -225,7 +247,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
                             <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase">Registered Players Directory</h2>
-                            <p class="text-xs text-slate-400">Click any row to update Auction status, or use Delete to remove permanently.</p>
+                            <p class="text-xs text-slate-400">Click 📢 **Broadcast** to send player to captains' screens instantly, or click row to edit status.</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
@@ -252,7 +274,7 @@
                                     <th class="p-3">Department & Hostel</th>
                                     <th class="p-3">Role</th>
                                     <th class="p-3">Auction Status</th>
-                                    <th class="p-3 text-center">Action</th>
+                                    <th class="p-3 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="playerTableBody"></tbody>
@@ -269,13 +291,11 @@
         </main>
     </div>
 
-    <!-- AUCTION EDIT POPUP MODAL FOR ADMIN -->
+    <!-- AUCTION EDIT MODAL FOR ADMIN -->
     <div id="auctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
             <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Update Auction Details</h3>
-            <div id="modalPlayerInfo" class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <!-- Populated via JS -->
-            </div>
+            <div id="modalPlayerInfo" class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
             <input type="hidden" id="modalPlayerId">
             <div class="space-y-3">
                 <div>
@@ -307,12 +327,11 @@
         <p>Designed & Developed with ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
     </footer>
 
-    <!-- Firebase SDK & Database Integration Script -->
+    <!-- Firebase SDK & Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
-        // Firebase Configuration Keys
         const firebaseConfig = {
             apiKey: "AIzaSyCcuJVNX8nm2njXA8np46a3Xcis13xr4",
             authDomain: "curaj-cricket-portal.firebaseapp.com",
@@ -334,9 +353,10 @@
             checkRegistrationStatus();
             loadPlayers();
             loadPublicAuction();
+            listenToLiveBroadcast(); // CAPTAINS' REALTIME LISTENER
         });
 
-        // REGISTRATION OPEN / CLOSE SYSTEM
+        // REGISTRATION STATUS
         window.checkRegistrationStatus = function() {
             const isOpen = localStorage.getItem('cpl_reg_status') !== 'closed';
             const form = document.getElementById('registrationForm');
@@ -347,14 +367,14 @@
                 form.classList.remove('hidden');
                 closedMsg.classList.add('hidden');
                 if(toggleBtn) {
-                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30";
+                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
                     toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> OPEN (Click to Close)`;
                 }
             } else {
                 form.classList.add('hidden');
                 closedMsg.classList.remove('hidden');
                 if(toggleBtn) {
-                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30";
+                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40";
                     toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> CLOSED (Click to Open)`;
                 }
             }
@@ -362,29 +382,28 @@
 
         window.toggleRegistrationStatus = function() {
             const currentStatus = localStorage.getItem('cpl_reg_status');
-            if(currentStatus === 'closed') {
-                localStorage.setItem('cpl_reg_status', 'open');
-                alert('Registration Portal is now OPEN!');
-            } else {
-                localStorage.setItem('cpl_reg_status', 'closed');
-                alert('Registration Portal is now CLOSED!');
-            }
+            localStorage.setItem('cpl_reg_status', currentStatus === 'closed' ? 'open' : 'closed');
             checkRegistrationStatus();
         }
 
         window.switchTab = function(tabName) {
-            ['registration', 'public-auction'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('border-emerald-500', 'text-emerald-400');
-                document.getElementById(`tab-${t}`).classList.add('border-transparent', 'text-slate-400');
+            ['registration', 'public-auction', 'captain-view'].forEach(t => {
+                const el = document.getElementById(`section-${t}`);
+                const tabEl = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+                if(tabEl) {
+                    tabEl.classList.remove('border-emerald-500', 'text-emerald-400');
+                    tabEl.classList.add('border-transparent', 'text-slate-400');
+                }
             });
-            document.getElementById(`section-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).classList.add('border-emerald-500', 'text-emerald-400');
-            document.getElementById(`tab-${tabName}`).classList.remove('border-transparent', 'text-slate-400');
-            
-            if(tabName === 'public-auction') {
-                loadPublicAuction();
+            const targetSec = document.getElementById(`section-${tabName}`);
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if(targetSec) targetSec.classList.remove('hidden');
+            if(targetTab) {
+                targetTab.classList.add('border-emerald-500', 'text-emerald-400');
+                targetTab.classList.remove('border-transparent', 'text-slate-400');
             }
+            if(tabName === 'public-auction') loadPublicAuction();
         }
 
         window.previewFile = function(event, previewId, iconId) {
@@ -402,10 +421,8 @@
             }
         }
 
-        // HANDLE REGISTRATION SUBMISSION TO FIRESTORE
         window.handleRegistration = async function(e) {
             e.preventDefault();
-            
             if(localStorage.getItem('cpl_reg_status') === 'closed') {
                 alert('Sorry, registrations are currently closed!');
                 return;
@@ -416,7 +433,7 @@
             submitBtn.disabled = true;
 
             const playerData = {
-                photo: studentPhotoData || 'https://via.placeholder.com/100',
+                photo: studentPhotoData || '',
                 paymentPhoto: paymentPhotoData || '',
                 fullName: document.getElementById('fullName').value,
                 studentId: document.getElementById('studentId').value,
@@ -434,18 +451,6 @@
 
             try {
                 await addDoc(collection(db, "registrations"), playerData);
-
-                // Update Live Preview Card
-                document.getElementById('prevCardPhotoBox').innerHTML = `<img src="${playerData.photo}" class="w-full h-full object-cover">`;
-                document.getElementById('prevCardName').innerText = playerData.fullName;
-                document.getElementById('prevCardId').innerText = playerData.studentId;
-                document.getElementById('prevCardDept').innerText = playerData.department;
-                document.getElementById('prevCardRole').innerText = playerData.role;
-                document.getElementById('prevCardStyle').innerText = playerData.style;
-                document.getElementById('prevCardHostel').innerText = playerData.hostel;
-                document.getElementById('prevCardMobile').innerText = playerData.mobile;
-                document.getElementById('prevCardUtr').innerText = playerData.utrNo;
-
                 alert('Registration completed & saved to Firebase successfully!');
                 document.getElementById('registrationForm').reset();
                 studentPhotoData = '';
@@ -454,11 +459,10 @@
                 document.getElementById('photoIcon').classList.remove('hidden');
                 document.getElementById('paymentPreview').classList.add('hidden');
                 document.getElementById('paymentIcon').classList.remove('hidden');
-                
                 loadPlayers();
             } catch (error) {
                 console.error("Error adding document: ", error);
-                alert("Error saving registration. Please check your internet connection.");
+                alert("Error saving registration.");
             } finally {
                 submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
                 submitBtn.disabled = false;
@@ -483,129 +487,150 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // LOAD PLAYERS FROM FIRESTORE FOR ADMIN PANEL
+        // LOAD PLAYERS FOR ADMIN TABLE
         window.loadPlayers = async function() {
             const tbody = document.getElementById('playerTableBody');
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading registrations from database...</td></tr>`;
+            if(!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading registrations...</td></tr>`;
 
             try {
                 const querySnapshot = await getDocs(collection(db, "registrations"));
-                let players = [];
+                tbody.innerHTML = '';
+                let total = 0, sold = 0, unsold = 0;
+
                 querySnapshot.forEach((docSnap) => {
-                    players.push({ docId: docSnap.id, ...docSnap.data() });
-                });
-                
-                let total = players.length;
-                let soldCount = players.filter(p => p.auctionStatus === 'Sold').length;
-                let unsoldCount = players.filter(p => p.auctionStatus === 'Unsold').length;
+                    total++;
+                    const p = docSnap.data();
+                    const id = docSnap.id;
+                    if(p.auctionStatus === 'Sold') sold++;
+                    if(p.auctionStatus === 'Unsold') unsold++;
 
-                if(document.getElementById('statTotal')) {
-                    document.getElementById('statTotal').innerText = total;
-                    document.getElementById('statSold').innerText = soldCount;
-                    document.getElementById('statUnsold').innerText = unsoldCount;
-                }
-                
-                if (players.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">No registrations found in database yet.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = players.map(p => `
-                    <tr class="border-b border-slate-800/60 hover:bg-slate-900/40">
-                        <td class="p-3" onclick="openAuctionModal('${p.docId}')"><img src="${p.photo}" class="w-10 h-10 rounded-lg object-cover border border-emerald-500/30 cursor-pointer"></td>
-                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')"><div class="font-bold text-white">${p.fullName}</div><div class="text-xs text-slate-400">${p.studentId}</div></td>
-                        <td class="p-3 text-slate-300 text-xs cursor-pointer" onclick="openAuctionModal('${p.docId}')">${p.department}<br><span class="text-slate-400">${p.hostel}</span></td>
-                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')"><span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded border border-emerald-500/20">${p.role}</span></td>
-                        <td class="p-3 cursor-pointer" onclick="openAuctionModal('${p.docId}')">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${
-                                p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
-                                p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                                'bg-slate-800 text-slate-400 border border-slate-700'
-                            }">
-                                ${p.auctionStatus}${p.auctionStatus === 'Sold' ? ` (${p.soldTeam} - ₹${p.bidPrice})` : ''}
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-slate-800 hover:bg-slate-900/60 transition";
+                    tr.innerHTML = `
+                        <td class="p-3"><img src="${p.photo || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded-lg object-cover border border-slate-700"></td>
+                        <td class="p-3"><strong>${p.fullName}</strong><br><span class="text-xs text-emerald-400">${p.studentId}</span></td>
+                        <td class="p-3">${p.department}<br><span class="text-xs text-slate-400">${p.hostel}</span></td>
+                        <td class="p-3"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs">${p.role}</span></td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400' : p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">
+                                ${p.auctionStatus}
                             </span>
                         </td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="openAuctionModal('${p.docId}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2.5 py-1 rounded text-xs transition cursor-pointer">Edit</button>
-                            <button onclick="deletePlayer('${p.docId}')" class="bg-red-500/20 text-red-400 hover:bg-red-500/30 px-2.5 py-1 rounded text-xs transition cursor-pointer">Delete</button>
+                        <td class="p-3 text-center flex items-center justify-center gap-2">
+                            <button onclick="broadcastPlayer('${id}', '${btoa(JSON.stringify(p))}')" class="bg-sky-600/80 hover:bg-sky-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer flex items-center gap-1" title="Broadcast to Captains">
+                                📢 Broadcast
+                            </button>
+                            <button onclick="openModal('${id}', '${p.fullName}', '${p.auctionStatus}', '${p.soldTeam || ''}', '${p.bidPrice || ''}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                                Edit
+                            </button>
+                            <button onclick="deletePlayer('${id}')" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                                Delete
+                            </button>
                         </td>
-                    </tr>
-                `).join('');
-                window.cachedPlayers = players;
-            } catch (error) {
-                console.error("Error loading players: ", error);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-red-400">Failed to load data from Firebase.</td></tr>`;
-            }
-        }
-
-        // LOAD PUBLIC AUCTION HUB
-        window.loadPublicAuction = async function() {
-            const grid = document.getElementById('publicAuctionGrid');
-            grid.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400">Loading auction status...</div>`;
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "registrations"));
-                let players = [];
-                querySnapshot.forEach((docSnap) => {
-                    players.push({ docId: docSnap.id, ...docSnap.data() });
+                    `;
+                    tbody.appendChild(tr);
                 });
 
-                // Show only Sold or Unsold players to the public
-                const activePlayers = players.filter(p => p.auctionStatus === 'Sold' || p.auctionStatus === 'Unsold');
-
-                if (activePlayers.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-12 space-y-3">
-                            <i data-lucide="gavel" class="w-12 h-12 text-slate-600 mx-auto"></i>
-                            <h3 class="text-lg font-bold text-slate-300">Auction is in progress or yet to start!</h3>
-                            <p class="text-xs text-slate-500">Check back soon as players are updated by the auctioneers.</p>
-                        </div>`;
-                    lucide.createIcons();
-                    return;
-                }
-
-                grid.innerHTML = activePlayers.map(p => `
-                    <div class="bg-slate-900 border ${p.auctionStatus === 'Sold' ? 'border-emerald-500/40' : 'border-amber-500/40'} rounded-2xl p-5 shadow-lg space-y-4">
-                        <div class="flex items-center gap-4">
-                            <img src="${p.photo}" class="w-16 h-16 rounded-xl object-cover border border-slate-700 shrink-0">
-                            <div>
-                                <h4 class="font-bold text-white text-lg">${p.fullName}</h4>
-                                <p class="text-xs text-emerald-400">${p.department}</p>
-                                <span class="inline-block mt-1 bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded border border-slate-700">${p.role}</span>
-                            </div>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
-                            <div class="flex justify-between"><span class="text-slate-400">Status:</span> <span class="font-bold ${p.auctionStatus === 'Sold' ? 'text-emerald-400' : 'text-amber-400'}">${p.auctionStatus}</span></div>
-                            ${p.auctionStatus === 'Sold' ? `
-                                <div class="flex justify-between"><span class="text-slate-400">Team:</span> <span class="text-white font-semibold">${p.soldTeam}</span></div>
-                                <div class="flex justify-between"><span class="text-slate-400">Winning Bid:</span> <span class="text-emerald-300 font-bold">₹${p.bidPrice}</span></div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `).join('');
+                document.getElementById('statTotal').innerText = total;
+                document.getElementById('statSold').innerText = sold;
+                document.getElementById('statUnsold').innerText = unsold;
                 lucide.createIcons();
-            } catch (error) {
-                console.error("Error loading public auction:", error);
-                grid.innerHTML = `<div class="col-span-3 text-center py-10 text-red-400">Failed to load auction hub.</div>`;
+            } catch (err) {
+                console.error("Error loading players:", err);
             }
         }
 
-        window.openAuctionModal = function(docId) {
-            const player = window.cachedPlayers.find(p => p.docId === docId);
-            if(!player) return;
+        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS VIA FIRESTORE
+        window.broadcastPlayer = async function(id, encodedPlayer) {
+            try {
+                const player = JSON.parse(atob(encodedPlayer));
+                // Set active player in Firestore 'liveAuction/current' doc
+                await setDoc(doc(db, "liveAuction", "current"), {
+                    id: id,
+                    fullName: player.fullName,
+                    department: player.department,
+                    role: player.role,
+                    style: player.style,
+                    photo: player.photo,
+                    auctionStatus: player.auctionStatus || 'Pending',
+                    updatedAt: new Date().toISOString()
+                });
+                alert(`📢 ${player.fullName} has been broadcasted to all Captains' screens successfully!`);
+            } catch (err) {
+                console.error("Broadcast error:", err);
+                alert("Failed to broadcast player.");
+            }
+        }
 
-            document.getElementById('modalPlayerId').value = docId;
-            document.getElementById('modalStatus').value = player.auctionStatus;
-            document.getElementById('modalTeam').value = player.soldTeam !== '-' ? player.soldTeam : '';
-            document.getElementById('modalPrice').value = player.bidPrice !== '0' ? player.bidPrice : '';
+        // REAL-TIME LISTENER FOR CAPTAINS' SCREEN (`onSnapshot`)
+        function listenToLiveBroadcast() {
+            onSnapshot(doc(db, "liveAuction", "current"), (docSnap) => {
+                if (docSnap.exists()) {
+                    const player = docSnap.data();
+                    const photoEl = document.getElementById('captainPlayerPhoto');
+                    const placeholderEl = document.getElementById('captainPhotoPlaceholder');
+                    
+                    if(player.photo) {
+                        photoEl.src = player.photo;
+                        photoEl.classList.remove('hidden');
+                        placeholderEl.classList.add('hidden');
+                    }
 
-            document.getElementById('modalPlayerInfo').innerHTML = `
-                <img src="${player.photo}" class="w-12 h-12 rounded-lg object-cover">
-                <div>
-                    <h4 class="font-bold text-white text-sm">${player.fullName}</h4>
-                    <p class="text-xs text-emerald-400">${player.studentId} • ${player.role}</p>
-                </div>
-            `;
+                    document.getElementById('captainPlayerName').innerText = player.fullName || "Unknown Player";
+                    document.getElementById('captainPlayerMeta').innerText = `${player.department || ''} • ${player.role || ''}`;
+                    document.getElementById('captainPlayerStyle').innerText = player.style || '-';
+                    document.getElementById('captainPlayerStatus').innerText = player.auctionStatus || 'Pending';
+                }
+            });
+        }
+
+        // PUBLIC AUCTION HUB
+        window.loadPublicAuction = async function() {
+            const grid = document.getElementById('publicAuctionGrid');
+            if(!grid) return;
+            grid.innerHTML = `<p class="text-slate-400 col-span-3 text-center py-6">Loading auction records...</p>`;
+            try {
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                grid.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    if(p.auctionStatus !== 'Pending') {
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-md";
+                        card.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <img src="${p.photo || 'https://via.placeholder.com/60'}" class="w-14 h-14 rounded-xl object-cover border border-emerald-500/40">
+                                <div>
+                                    <h4 class="font-bold text-white text-base">${p.fullName}</h4>
+                                    <p class="text-xs text-emerald-400">${p.department}</p>
+                                </div>
+                            </div>
+                            <div class="text-xs space-y-1 text-slate-300 border-t border-slate-800 pt-2">
+                                <div class="flex justify-between"><span>Role:</span> <strong class="text-white">${p.role}</strong></div>
+                                <div class="flex justify-between"><span>Status:</span> <strong class="${p.auctionStatus === 'Sold' ? 'text-emerald-400' : 'text-amber-400'}">${p.auctionStatus}</strong></div>
+                                <div class="flex justify-between"><span>Team:</span> <strong class="text-white">${p.soldTeam || '-'}</strong></div>
+                                <div class="flex justify-between"><span>Bid Price:</span> <strong class="text-emerald-300">₹${p.bidPrice || '0'}</strong></div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    }
+                });
+                if(grid.innerHTML === '') {
+                    grid.innerHTML = `<p class="text-slate-500 col-span-3 text-center py-6">No players have been auctioned yet.</p>`;
+                }
+            } catch (err) {
+                console.error("Error loading public auction:", err);
+            }
+        }
+
+        // MODAL EDIT FUNCTIONS
+        window.openModal = function(id, name, status, team, price) {
+            document.getElementById('modalPlayerId').value = id;
+            document.getElementById('modalStatus').value = status;
+            document.getElementById('modalTeam').value = team;
+            document.getElementById('modalPrice').value = price;
+            document.getElementById('modalPlayerInfo').innerHTML = `<strong class="text-white text-sm">${name}</strong>`;
             document.getElementById('auctionModal').classList.remove('hidden');
         }
 
@@ -613,60 +638,37 @@
             document.getElementById('auctionModal').classList.add('hidden');
         }
 
-        // SAVE MODAL AUCTION DETAILS TO FIRESTORE
         window.saveModalAuction = async function() {
-            const docId = document.getElementById('modalPlayerId').value;
+            const id = document.getElementById('modalPlayerId').value;
             const status = document.getElementById('modalStatus').value;
             const team = document.getElementById('modalTeam').value || '-';
             const price = document.getElementById('modalPrice').value || '0';
 
             try {
-                const playerRef = doc(db, "registrations", docId);
-                await updateDoc(playerRef, {
+                await updateDoc(doc(db, "registrations", id), {
                     auctionStatus: status,
-                    soldTeam: status === 'Sold' ? team : '-',
-                    bidPrice: status === 'Sold' ? price : '0'
+                    soldTeam: team,
+                    bidPrice: price
                 });
-
                 closeModal();
                 loadPlayers();
-                alert('Auction details updated successfully in Firebase!');
-            } catch (error) {
-                console.error("Error updating document: ", error);
-                alert("Failed to update auction details.");
+                alert('Auction details updated successfully!');
+            } catch (err) {
+                console.error("Error updating:", err);
+                alert("Failed to update.");
             }
         }
 
-        // DELETE PLAYER FROM FIRESTORE
-        window.deletePlayer = async function(docId) {
-            if(confirm('Are you sure you want to permanently delete this registration?')) {
+        window.deletePlayer = async function(id) {
+            if(confirm("Are you sure you want to permanently delete this player from Firebase?")) {
                 try {
-                    await deleteDoc(doc(db, "registrations", docId));
+                    await deleteDoc(doc(db, "registrations", id));
                     loadPlayers();
-                    alert('Registration deleted successfully!');
-                } catch (error) {
-                    console.error("Error deleting document: ", error);
-                    alert("Failed to delete registration.");
+                    alert('Player deleted successfully.');
+                } catch (err) {
+                    console.error("Delete error:", err);
                 }
             }
-        }
-
-        window.exportCSV = function() {
-            const players = window.cachedPlayers || [];
-            if(players.length === 0) {
-                alert('No data to export!');
-                return;
-            }
-            let csv = 'Full Name,Student ID,Department,Mobile,Hostel,UTR No,Role,Style,Status,Team,Bid Price\n';
-            players.forEach(p => {
-                csv += `"${p.fullName}","${p.studentId}","${p.department}","${p.mobile}","${p.hostel}","${p.utrNo}","${p.role}","${p.style}","${p.auctionStatus}","${p.soldTeam}","${p.bidPrice}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'CPL_Registered_Players.csv');
-            a.click();
         }
     </script>
 </body>
