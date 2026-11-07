@@ -6,8 +6,15 @@
     <title>CURAJ Premier League - Student Portal & Live Auction</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Outfit:wght@300;400;600;700&display=swap');
         body { font-family: 'Outfit', sans-serif; }
@@ -17,13 +24,29 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(56, 189, 248, 0.25);
         }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        html:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #0f172a;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 dark:bg-slate-950 dark:text-slate-100 bg-slate-50 text-slate-900 min-h-screen pb-12 flex flex-col justify-between transition-colors duration-300">
 
     <div>
+        <!-- Top Utility Bar: Theme Toggle -->
+        <div class="max-w-6xl mx-auto px-4 pt-4 flex justify-end">
+            <button onclick="toggleDarkMode()" class="bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-800 text-slate-200 dark:text-slate-200 text-slate-800 px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow cursor-pointer transition">
+                <i data-lucide="moon" id="themeIcon" class="w-4 h-4 text-emerald-400"></i> <span id="themeText">Dark Mode</span>
+            </button>
+        </div>
+
         <!-- Header / Banner -->
-        <header class="relative border-b border-sky-500/30 py-20 px-4 text-center overflow-hidden">
+        <header class="relative border-b border-sky-500/30 py-16 px-4 text-center overflow-hidden mt-2">
             <div class="absolute inset-0 bg-cover bg-center opacity-85" style="background-image: url('https://cdn.collegewollege.com/storage/colleges/branding/ZEQgdsCVJhnDJaziqGDr6ZYdfCs6MgvGrO3pXrHd.webp');"></div>
             <div class="absolute inset-0 bg-slate-950/25"></div>
 
@@ -31,23 +54,20 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL — Live Player Registration, Auction Hub & Captains' Arena 🏏</p>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL —  Player Registration, Live Auction Hub & Captains' Arena 🏏</p>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (Teams view removed from here, now inside Admin) -->
         <nav class="max-w-6xl mx-auto px-4 mt-6">
-            <div class="flex border-b border-slate-800 gap-4 overflow-x-auto justify-center">
+            <div class="flex border-b border-slate-800 dark:border-slate-800 border-slate-200 gap-4 overflow-x-auto justify-center">
                 <button onclick="switchTab('registration')" id="tab-registration" class="py-3 px-6 text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 cursor-pointer transition">
                     <i data-lucide="user-plus" class="w-4 h-4"></i> Registration Form
                 </button>
-                <button onclick="switchTab('public-auction')" id="tab-public-auction" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                <button onclick="switchTab('public-auction')" id="tab-public-auction" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 dark:text-slate-400 text-slate-600 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
                     <i data-lucide="gavel" class="w-4 h-4"></i> Auction Status Hub
                 </button>
-                <button onclick="switchTab('team-summary')" id="tab-team-summary" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i> Team Squads & Purse
-                </button>
-                <button onclick="switchTab('captain-view')" id="tab-captain-view" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                <button onclick="switchTab('captain-view')" id="tab-captain-view" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 dark:text-slate-400 text-slate-600 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
                     <i data-lucide="monitor-play" class="w-4 h-4"></i> Captains' Screen
                 </button>
             </div>
@@ -60,7 +80,7 @@
             <div id="section-registration" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-7">
                     <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative">
-                        <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-6 border-b border-slate-800 pb-3">
+                        <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-6 border-b border-slate-800 dark:border-slate-800 border-slate-200 pb-3">
                             <i data-lucide="clipboard-list"></i> CPL Player Registration
                         </h2>
 
@@ -68,15 +88,15 @@
                         <div id="closedMessage" class="hidden bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-8 text-center my-6 space-y-3">
                             <i data-lucide="lock" class="w-12 h-12 text-amber-400 mx-auto"></i>
                             <h3 class="text-2xl font-bold text-amber-400 font-cricket uppercase tracking-wide">Registrations Are Currently Closed!</h3>
-                            <p class="text-sm text-slate-300">The CPL team has currently closed the registration portal.</p>
+                            <p class="text-sm text-slate-300 dark:text-slate-300 text-slate-700">The CPL team has currently closed the registration portal.</p>
                         </div>
 
                         <!-- REGISTRATION FORM -->
                         <form id="registrationForm" onsubmit="handleRegistration(event)" class="space-y-5">
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Student Photo *</label>
+                                <label class="block text-xs font-semibold uppercase text-slate-300 dark:text-slate-300 text-slate-700 mb-1">Student Photo *</label>
                                 <div class="flex items-center gap-3">
-                                    <div class="w-14 h-14 rounded-xl border border-dashed border-emerald-500/40 bg-slate-900 flex items-center justify-center overflow-hidden shrink-0">
+                                    <div class="w-14 h-14 rounded-xl border border-dashed border-emerald-500/40 bg-slate-900 dark:bg-slate-900 bg-slate-100 flex items-center justify-center overflow-hidden shrink-0">
                                         <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Photo">
                                         <i id="photoIcon" data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
                                     </div>
@@ -86,34 +106,34 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Full Name *</label>
-                                    <input type="text" id="fullName" required oninput="updatePreview()" placeholder="e.g. Ayush Gupta" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Full Name *</label>
+                                    <input type="text" id="fullName" required oninput="updatePreview()" placeholder="e.g. Ayush Gupta" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Student ID / Enrollment No *</label>
-                                    <input type="text" id="studentId" required oninput="updatePreview()" placeholder="e.g. 2024CURAJ..." class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Department *</label>
-                                    <input type="text" id="department" required oninput="updatePreview()" placeholder="e.g. Computer Science" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">WhatsApp Number *</label>
-                                    <input type="tel" id="mobile" required oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Student ID / Enrollment No *</label>
+                                    <input type="text" id="studentId" required oninput="updatePreview()" placeholder="e.g. 2024CURAJ..." class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Hostel Name & Room No *</label>
-                                    <input type="text" id="hostel" required oninput="updatePreview()" placeholder="e.g. B-4, Room 204" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Department *</label>
+                                    <input type="text" id="department" required oninput="updatePreview()" placeholder="e.g. Computer Science" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Primary Role *</label>
-                                    <select id="cricketRole" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">WhatsApp Number *</label>
+                                    <input type="tel" id="mobile" required oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Hostel Name & Room No *</label>
+                                    <input type="text" id="hostel" required oninput="updatePreview()" placeholder="e.g. B-4, Room 204" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Primary Role *</label>
+                                    <select id="cricketRole" required onchange="updatePreview()" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
                                         <option value="Batsman">Batsman</option>
                                         <option value="Bowler">Bowler</option>
                                         <option value="All-Rounder">All-Rounder</option>
@@ -122,23 +142,21 @@
                                 </div>
                             </div>
 
-                            <!-- SEPARATED BATTING & BOWLING STYLE DROPDOWNS -->
+                            <!-- Playing Style Structured (Batting & Bowling) -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Batting Style *</label>
-                                    <select id="battingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
-                                        <option value="Right-Handed Bat">Right-Handed Bat</option>
-                                        <option value="Left-Handed Bat">Left-Handed Bat</option>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Batting Style *</label>
+                                    <select id="battingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
+                                        <option value="Right Hand Bat">Right Hand Bat</option>
+                                        <option value="Left Hand Bat">Left Hand Bat</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bowling Style *</label>
-                                    <select id="bowlingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
-                                        <option value="Right-Arm Fast">Right-Arm Fast</option>
-                                        <option value="Right-Arm Spin">Right-Arm Spin</option>
-                                        <option value="Left-Arm Fast">Left-Arm Fast</option>
-                                        <option value="Left-Arm Spin">Left-Arm Spin</option>
-                                        <option value="Non-Bowler">Non-Bowler</option>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Bowling Style *</label>
+                                    <select id="bowlingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
+                                        <option value="None / Not Applicable">None / Not Applicable</option>
+                                        <option value="Pace">Pace</option>
+                                        <option value="Spin">Spin</option>
                                     </select>
                                 </div>
                             </div>
@@ -154,24 +172,24 @@
                 <div class="lg:col-span-5 space-y-6">
                     <div class="glass-card rounded-2xl p-6 text-center border-t-4 border-emerald-500 shadow-2xl sticky top-6">
                         <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase tracking-wider mb-4">Registration Live Preview</h3>
-                        <div id="livePreviewContainer" class="bg-slate-900/95 rounded-2xl p-5 border border-slate-800 text-left space-y-4 shadow-inner">
+                        <div id="livePreviewContainer" class="bg-slate-900/95 dark:bg-slate-900/95 bg-white rounded-2xl p-5 border border-slate-800 dark:border-slate-800 border-slate-200 text-left space-y-4 shadow-inner">
                             <div class="flex items-center gap-4">
-                                <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
+                                <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 dark:bg-slate-800 bg-slate-200 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
                                     <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Photo">
                                     <i id="prevCardPhotoIcon" data-lucide="user" class="w-8 h-8 text-slate-500"></i>
                                 </div>
                                 <div>
-                                    <h4 id="prevCardName" class="font-bold text-white text-lg">Not Submitted Yet</h4>
+                                    <h4 id="prevCardName" class="font-bold text-white dark:text-white text-slate-900 text-lg">Not Submitted Yet</h4>
                                     <p id="prevCardId" class="text-xs text-emerald-400 font-medium">Enrollment ID</p>
                                 </div>
                             </div>
-                            <div class="text-sm space-y-2 text-slate-300 border-t border-slate-800 pt-3">
-                                <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white">-</span></div>
+                            <div class="text-sm space-y-2 text-slate-300 dark:text-slate-300 text-slate-700 border-t border-slate-800 dark:border-slate-800 border-slate-200 pt-3">
+                                <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white dark:text-white text-slate-900">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">Batsman</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Batting:</strong> <span id="prevCardBatting" class="text-white">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Bowling:</strong> <span id="prevCardBowling" class="text-white">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Batting:</strong> <span id="prevCardBatting" class="text-white dark:text-white text-slate-900">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Bowling:</strong> <span id="prevCardBowling" class="text-white dark:text-white text-slate-900">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white dark:text-white text-slate-900">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white dark:text-white text-slate-900">-</span></div>
                             </div>
                         </div>
                     </div>
@@ -193,20 +211,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: TEAM SQUADS & PURSE SUMMARY -->
-            <div id="section-team-summary" class="hidden space-y-6">
-                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase flex items-center gap-2">
-                            <i data-lucide="shield-check"></i> Team Squads & Remaining Purse (£100 Cr Start)
-                        </h2>
-                        <p class="text-xs text-slate-400">Automatic team-wise division, budget deductions, and player rosters based on live auction records.</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="teamSummaryContainer"></div>
-                </div>
-            </div>
-
-            <!-- TAB 4: CAPTAINS' LIVE BROADCAST SCREEN -->
+            <!-- TAB 3: CAPTAINS' LIVE BROADCAST SCREEN (Starts Blank until Admin Broadcasts) -->
             <div id="section-captain-view" class="hidden space-y-6">
                 <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-sky-500/40 text-center max-w-3xl mx-auto">
                     <div class="inline-block bg-sky-500/20 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border border-sky-500/30 animate-pulse">
@@ -214,18 +219,20 @@
                     </div>
 
                     <div id="captainLiveDisplay" class="space-y-6">
-                        <div class="w-40 h-40 md:w-52 md:h-52 mx-auto rounded-2xl bg-slate-900 border-4 border-emerald-500/60 shadow-2xl overflow-hidden flex items-center justify-center">
+                        <div class="w-40 h-40 md:w-52 md:h-52 mx-auto rounded-2xl bg-slate-900 dark:bg-slate-900 bg-slate-100 border-4 border-emerald-500/60 shadow-2xl overflow-hidden flex items-center justify-center">
                             <img id="captainPlayerPhoto" src="" alt="Player Photo" class="w-full h-full object-cover hidden">
                             <i id="captainPhotoPlaceholder" data-lucide="user" class="w-16 h-16 text-slate-600"></i>
                         </div>
 
                         <div class="space-y-2">
-                            <h2 id="captainPlayerName" class="text-3xl md:text-5xl font-extrabold font-cricket uppercase text-white tracking-wide">Waiting for Admin to Broadcast...</h2>
+                            <h2 id="captainPlayerName" class="text-3xl md:text-5xl font-extrabold font-cricket uppercase text-white dark:text-white text-slate-900 tracking-wide">Waiting for Admin to Broadcast...</h2>
                             <p id="captainPlayerMeta" class="text-emerald-400 font-semibold text-lg">Department & Role will appear here instantly</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-left text-sm">
-                            <div><span class="text-slate-400 block text-xs">Playing Style:</span> <strong id="captainPlayerStyle" class="text-white">-</strong></div>
+                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 dark:bg-slate-900/80 bg-slate-100 p-4 rounded-2xl border border-slate-800 text-left text-sm">
+                            <div><span class="text-slate-400 block text-xs">Batting Style:</span> <strong id="captainPlayerBatting" class="text-white dark:text-white text-slate-900">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs">Bowling Style:</span> <strong id="captainPlayerBowling" class="text-white dark:text-white text-slate-900">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs">Role:</span> <strong id="captainPlayerRole" class="text-emerald-300">-</strong></div>
                             <div><span class="text-slate-400 block text-xs">Auction Status:</span> <strong id="captainPlayerStatus" class="text-amber-400">-</strong></div>
                         </div>
                     </div>
@@ -234,14 +241,14 @@
 
             <!-- SECRET ADMIN PANEL -->
             <div id="adminSection" class="hidden space-y-8 mt-6">
-                <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900 p-5 rounded-2xl border border-emerald-500/30 gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900 dark:bg-slate-900 bg-white p-5 rounded-2xl border border-emerald-500/30 gap-4 shadow-xl">
                     <div>
                         <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase">🛡️ Admin Control Panel</h3>
                         <p class="text-xs text-slate-400">Manage registrations, broadcast players to captains, and update bidding statuses.</p>
                     </div>
 
-                    <div class="flex items-center gap-3 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
-                        <span class="text-xs font-semibold text-slate-300">Registration Portal:</span>
+                    <div class="flex items-center gap-3 bg-slate-950 dark:bg-slate-950 bg-slate-100 px-4 py-2 rounded-xl border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-300 dark:text-slate-300 text-slate-700">Registration Portal:</span>
                         <button id="toggleRegBtn" onclick="toggleRegistrationStatus()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
                         </button>
                     </div>
@@ -249,64 +256,62 @@
                     <button onclick="hideAdmin()" class="bg-red-600/80 hover:bg-red-600 text-white text-xs px-4 py-2 rounded-xl cursor-pointer">Close Admin</button>
                 </div>
 
-                <!-- ROLE-WISE BREAKDOWN COUNTER CARDS FOR ADMIN -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div class="bg-slate-900 border border-sky-500/30 rounded-2xl p-4 text-center">
-                        <span class="text-xs uppercase text-slate-400 block font-semibold">Batsmen</span>
-                        <span id="countBatsman" class="text-2xl font-bold font-cricket text-sky-400">0</span>
+                <!-- Admin Team & Franchise Management Section -->
+                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6 border border-emerald-500/30">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase flex items-center gap-2">
+                                <i data-lucide="shield-check"></i> CPL Franchise Teams & Squads Management (Admin Only)
+                            </h2>
+                            <p class="text-xs text-slate-400">Create teams on the spot, manage ₹100 Cr purses, and view squad breakdowns.</p>
+                        </div>
+                        <button onclick="openTeamManagementModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">
+                            + Create New Team
+                        </button>
                     </div>
-                    <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 text-center">
-                        <span class="text-xs uppercase text-slate-400 block font-semibold">Bowlers</span>
-                        <span id="countBowler" class="text-2xl font-bold font-cricket text-emerald-400">0</span>
-                    </div>
-                    <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-4 text-center">
-                        <span class="text-xs uppercase text-slate-400 block font-semibold">All-Rounders</span>
-                        <span id="countAllRounder" class="text-2xl font-bold font-cricket text-amber-400">0</span>
-                    </div>
-                    <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 text-center">
-                        <span class="text-xs uppercase text-slate-400 block font-semibold">Wicket Keepers</span>
-                        <span id="countWk" class="text-2xl font-bold font-cricket text-purple-400">0</span>
+
+                    <div id="teamsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rendered dynamically -->
                     </div>
                 </div>
 
-                TabSwitch(tabName) {
-            ['registration', 'pub<div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <!-- Admin Action Hub & Quick Search -->
+                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
-                            <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase">Registered Players Directory</h2>
-                            <p class="text-xs text-slate-400">Search and filter players, or click 📢 **Broadcast** for captains' screens.</p>
+                            <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase">Registered Players Directory & History</h2>
+                            <p class="text-xs text-slate-400">Click 📢 Broadcast to send player to captains' screens instantly, or click row to edit status.</p>
                         </div>
-                        <div class="flex items-center gap-3 flex-wrap">
-                            <!-- Search & Filter Controls -->
-                            <input type="text" id="adminSearchInput" oninput="filterAdminPlayers()" placeholder="Search name/ID..." class="bg-slate-950 border border-slate-700 text-xs text-white px-3 py-2 rounded-lg outline-none focus:border-emerald-500">
-                            <select id="adminRoleFilter" onchange="filterAdminPlayers()" class="bg-slate-950 border border-slate-700 text-xs text-white px-3 py-2 rounded-lg outline-none focus:border-emerald-500">
-                                <option value="All">All Roles</option>
-                                <option value="Batsman">Batsman</option>
-                                <option value="Bowler">Bowler</option>
-                                <option value="All-Rounder">All-Rounder</option>
-                                <option value="Wicket Keeper Batsman">Wicket Keeper</option>
-                            </select>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <input type="text" id="adminSearchInput" oninput="filterAdminTable()" placeholder="Search by name, ID..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white outline-none">
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">Total: <span id="statTotal" class="font-bold text-white">0</span></div>
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">Sold: <span id="statSold" class="font-bold text-emerald-400">0</span></div>
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">Unsold: <span id="statUnsold" class="font-bold text-amber-400">0</span></div>
+                            <!-- EXPORT EXCEL BUTTON (ADMIN ONLY) -->
+                            <button onclick="exportAdminExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
+                            </button>
+                        </div>
+                    </div>
 
-                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
-                                Total: <span id="statTotal" class="font-bold text-white">0</span>
-                            </div>
-                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
-                                Sold: <span id="statSold" class="font-bold text-emerald-400">0</span>
-                            </div>
-                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
-                                Unsold: <span id="statUnsold" class="font-bold text-amber-400">0</span>
-                            </div>
+                    <!-- Auction History Log Section -->
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-2">
+                        <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i> Complete Auction History Log
+                        </h4>
+                        <div id="auctionHistoryLog" class="max-h-32 overflow-y-auto text-xs space-y-1 text-slate-300">
+                            <p class="text-slate-500">No auction actions recorded yet.</p>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-slate-800">
+                        <table class="w-full text-left text-sm text-slate-300 dark:text-slate-300 text-slate-700">
+                            <thead class="bg-slate-900 dark:bg-slate-900 bg-slate-200 text-xs uppercase text-slate-400 border-b border-slate-800">
                                 <tr>
                                     <th class="p-3">Photo</th>
                                     <th class="p-3">Name / ID</th>
                                     <th class="p-3">Department & Hostel</th>
-                                    <th class="p-3">Role</th>
+                                    <th class="p-3">Role / Styles</th>
                                     <th class="p-3">Auction Status</th>
                                     <th class="p-3 text-center">Actions</th>
                                 </tr>
@@ -319,7 +324,7 @@
 
             <!-- Hidden Admin Access Button (Auto hides when admin is logged in) -->
             <div id="adminAccessBtnContainer" class="text-center mt-16">
-                <button onclick="showAdminPasswordModal()" class="text-slate-500 hover:text-slate-300 text-xs underline cursor-pointer bg-slate-900/60 px-4 py-2 rounded-lg border border-slate-800">Admin Login / View Hub</button>
+                <button onclick="showAdminPasswordModal()" class="text-slate-500 hover:text-slate-300 text-xs underline cursor-pointer bg-slate-900/60 dark:bg-slate-900/60 bg-white px-4 py-2 rounded-lg border border-slate-800 shadow">Admin Login / View Hub</button>
             </div>
 
         </main>
@@ -343,7 +348,7 @@
         </div>
     </div>
 
-    <!-- AUCTION EDIT MODAL FOR ADMIN WITH CRORE & LAKH INPUTS -->
+    <!-- AUCTION EDIT MODAL FOR ADMIN WITH DYNAMIC TEAM DROPDOWN -->
     <div id="auctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
             <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Update Auction Details</h3>
@@ -359,19 +364,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Sold Team Name</label>
-                    <input type="text" id="modalTeam" placeholder="e.g. CURAJ Mavericks" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Sold Team Name (Dynamic)</label>
+                    <select id="modalTeam" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
+                        <!-- Populated dynamically from admin created teams list -->
+                    </select>
                 </div>
-                <!-- Separate Bid Price Inputs for Crores and Lakhs -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bid Price (Crores)</label>
-                        <input type="number" id="modalCrores" min="0" placeholder="e.g. 1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bid Price (Lakhs)</label>
-                        <input type="number" id="modalLakhs" min="0" max="99" step="5" placeholder="e.g. 20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bid Price (₹ Cr / ₹)</label>
+                    <input type="number" id="modalPrice" placeholder="e.g. 5" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
                 </div>
             </div>
             <div class="flex gap-3 pt-2">
@@ -381,9 +381,40 @@
         </div>
     </div>
 
+    <!-- TEAM MANAGEMENT MODAL (ADMIN ONLY) -->
+    <div id="teamManagementModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
+            <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Create New Franchise Team</h3>
+            <form onsubmit="handleTeamCreation(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Team Name *</label>
+                    <input type="text" id="newTeamName" required placeholder="e.g. CURAJ Mavericks" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Captain Name *</label>
+                        <input type="text" id="newCaptainName" required placeholder="Captain Name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Captain Phone *</label>
+                        <input type="tel" id="newCaptainPhone" required placeholder="Phone Number" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Team Logo / Banner Image *</label>
+                    <input type="file" id="newTeamLogoFile" accept="image/*" required class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer">Save & Create Team</button>
+            </form>
+            <div class="pt-2 text-center">
+                <button onclick="closeTeamManagementModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-1.5 rounded-xl text-xs cursor-pointer">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Developer Credit Footer -->
     <footer class="mt-20 py-6 text-center border-t border-slate-900 text-slate-500 text-xs">
-        <p>Designed & Developed with ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
+        <p>Designed & Developed ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
     </footer>
 
     <!-- Firebase SDK & Script -->
@@ -405,9 +436,7 @@
         const db = getFirestore(app);
 
         let studentPhotoData = '';
-        let isCaptainAuthenticated = false;
-        let currentAuthCallback = null;
-        let allPlayersCache = [];
+        let allRegistrationsCache = [];
 
         lucide.createIcons();
         document.addEventListener('DOMContentLoaded', () => {
@@ -415,43 +444,86 @@
             loadPlayers();
             loadPublicAuction();
             listenToLiveBroadcast();
+            loadTeamsAndPurses();
+            initDarkMode();
         });
 
-        // REGISTRATION STATUS
-        window.checkRegistrationStatus = function() {
-            const isOpen = localStorage.getItem('cpl_reg_status') !== 'closed';
-            const form = document.getElementById('registrationForm');
-            const closedMsg = document.getElementById('closedMessage');
-            const toggleBtn = document.getElementById('toggleRegBtn');
-
-            if(isOpen) {
-                if(form) form.classList.remove('hidden');
-                if(closedMsg) closedMsg.classList.add('hidden');
-                if(toggleBtn) {
-                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
-                    toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> OPEN (Click to Close)`;
-                }
-            } else {
-                if(form) form.classList.add('hidden');
-                if(closedMsg) closedMsg.classList.remove('hidden');
-                if(toggleBtn) {
-                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40";
-                    toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> CLOSED (Click to Open)`;
-                }
-            }
+        // THEME TOGGLE
+        window.toggleDarkMode = function() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('cpl_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeText').innerText = isDark ? 'Dark Mode' : 'Light Mode';
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+            lucide.createIcons();
         }
 
-        window.toggleRegistrationStatus = function() {
-            const currentStatus = localStorage.getItem('cpl_reg_status');
-            localStorage.setItem('cpl_reg_status', currentStatus === 'closed' ? 'open' : 'closed');
-            checkRegistrationStatus();
+        function initDarkMode() {
+            const savedTheme = localStorage.getItem('cpl_theme') || 'dark';
+            if(savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeText').innerText = 'Light Mode';
+                document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeText').innerText = 'Dark Mode';
+                document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        }
+
+        // REGISTRATION STATUS (FIREBASE CENTRALIZED)
+        window.checkRegistrationStatus = async function() {
+            try {
+                const snap = await getDocs(collection(db, "settings"));
+                let isOpen = true;
+                snap.forEach(d => {
+                    if(d.id === 'config') {
+                        const dat = d.data();
+                        if(dat.regStatus === 'closed') isOpen = false;
+                    }
+                });
+
+                const form = document.getElementById('registrationForm');
+                const closedMsg = document.getElementById('closedMessage');
+                const toggleBtn = document.getElementById('toggleRegBtn');
+
+                if(isOpen) {
+                    if(form) form.classList.remove('hidden');
+                    if(closedMsg) closedMsg.classList.add('hidden');
+                    if(toggleBtn) {
+                        toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                        toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> OPEN (Click to Close)`;
+                    }
+                } else {
+                    if(form) form.classList.add('hidden');
+                    if(closedMsg) closedMsg.classList.remove('hidden');
+                    if(toggleBtn) {
+                        toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40";
+                        toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> CLOSED (Click to Open)`;
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        window.toggleRegistrationStatus = async function() {
+            try {
+                const snap = await getDocs(collection(db, "settings"));
+                let currentStatus = 'open';
+                snap.forEach(d => {
+                    if(d.id === 'config') currentStatus = d.data().regStatus || 'open';
+                });
+                const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
+                await setDoc(doc(db, "settings", "config"), { regStatus: newStatus }, { merge: true });
+                checkRegistrationStatus();
+            } catch(e) { alert("Failed to toggle registration status."); }
         }
 
         // TAB SWITCHING WITH PASSWORD PROTECTION FOR CAPTAINS' VIEW
         window.switchTab = function(tabName) {
-            if(tabName === 'captain-view' && !isCaptainAuthenticated) {
+            if(tabName === 'captain-view' && !window.isCaptainAuthenticated) {
                 showPasswordModal("Captain Access", "Enter Captain Password to Access Live Screen:", "CURAJ_CAPTAIN", () => {
-                    isCaptainAuthenticated = true;
+                    window.isCaptainAuthenticated = true;
                     alert('Access Granted! Welcome Captain.');
                     executeTabSwitch(tabName);
                 });
@@ -460,7 +532,8 @@
             executeTabSwitch(tabName);
         }
 
-        function executelic-auction', 'team-summary', 'captain-view'].forEach(t => {
+        function executeTabSwitch(tabName) {
+            ['registration', 'public-auction', 'captain-view'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 const tabEl = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
@@ -477,10 +550,9 @@
                 targetTab.classList.remove('border-transparent', 'text-slate-400');
             }
             if(tabName === 'public-auction') loadPublicAuction();
-            if(tabName === 'team-summary') loadTeamSummary();
         }
 
-        // MASKED PASSWORD MODAL FUNCTIONS (STAR DISPLAY)
+        // MASKED PASSWORD MODAL FUNCTIONS
         window.showAdminPasswordModal = function() {
             showPasswordModal("Admin Login", "Enter Admin Password:", "ADMIN_AYUSH6200", () => {
                 const adminSec = document.getElementById('adminSection');
@@ -490,6 +562,7 @@
                 window.scrollTo({top: adminSec.offsetTop, behavior: 'smooth'});
                 checkRegistrationStatus();
                 loadPlayers();
+                loadTeamsAndPurses();
             });
         }
 
@@ -499,28 +572,24 @@
             document.getElementById('modalPasswordInput').value = '';
             document.getElementById('passwordModal').classList.remove('hidden');
             document.getElementById('modalPasswordInput').focus();
-            currentAuthCallback = { correctPass, callback };
+            window.currentAuthCallback = { correctPass, callback };
         }
 
         window.closePasswordModal = function() {
             document.getElementById('passwordModal').classList.add('hidden');
-            currentAuthCallback = null;
+            window.currentAuthCallback = null;
         }
 
         window.verifyPassword = function() {
             const inputEl = document.getElementById('modalPasswordInput');
             const enteredVal = inputEl ? inputEl.value.trim() : '';
-            
-            if(currentAuthCallback && enteredVal === currentAuthCallback.correctPass) {
-                const cb = currentAuthCallback.callback;
+            if(window.currentAuthCallback && enteredVal === window.currentAuthCallback.correctPass) {
+                const cb = window.currentAuthCallback.callback;
                 closePasswordModal();
                 cb();
             } else {
                 alert('Incorrect Password! Please try again.');
-                if(inputEl) {
-                    inputEl.value = '';
-                    inputEl.focus();
-                }
+                if(inputEl) { inputEl.value = ''; inputEl.focus(); }
             }
         }
 
@@ -528,9 +597,7 @@
             const passInput = document.getElementById('modalPasswordInput');
             if(passInput) {
                 passInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        verifyPassword();
-                    }
+                    if (e.key === 'Enter') verifyPassword();
                 });
             }
         });
@@ -575,10 +642,16 @@
             document.getElementById('prevCardMobile').innerText = mobile || "-";
         }
 
+        // DUPLICATE PLAYER VERIFICATION & SUBMISSION
         window.handleRegistration = async function(e) {
             e.preventDefault();
-            if(localStorage.getItem('cpl_reg_status') === 'closed') {
-                alert('Sorry, registrations are currently closed!');
+            
+            const studentIdInput = document.getElementById('studentId').value.trim();
+            const mobileInput = document.getElementById('mobile').value.trim();
+
+            const duplicate = allRegistrationsCache.some(p => p.studentId === studentIdInput || p.mobile === mobileInput);
+            if(duplicate) {
+                alert('⚠️ Duplicate Registration Detected! A player with this Student ID or Mobile Number is already registered.');
                 return;
             }
 
@@ -586,19 +659,16 @@
             submitBtn.innerText = "Submitting to Database...";
             submitBtn.disabled = true;
 
-            const batting = document.getElementById('battingStyle').value;
-            const bowling = document.getElementById('bowlingStyle').value;
-            const combinedStyle = `${batting} / ${bowling}`;
-
             const playerData = {
                 photo: studentPhotoData || '',
                 fullName: document.getElementById('fullName').value,
-                studentId: document.getElementById('studentId').value,
+                studentId: studentIdInput,
                 department: document.getElementById('department').value,
-                mobile: document.getElementById('mobile').value,
+                mobile: mobileInput,
                 hostel: document.getElementById('hostel').value,
                 role: document.getElementById('cricketRole').value,
-                style: combinedStyle,
+                battingStyle: document.getElementById('battingStyle').value,
+                bowlingStyle: document.getElementById('bowlingStyle').value,
                 auctionStatus: 'Pending',
                 soldTeam: '-',
                 bidPrice: '0',
@@ -636,7 +706,7 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // LOAD PLAYERS FOR ADMIN TABLE & CATEGORY BREAKDOWN
+        // LOAD PLAYERS & CACHE
         window.loadPlayers = async function() {
             const tbody = document.getElementById('playerTableBody');
             if(!tbody) return;
@@ -644,112 +714,70 @@
 
             try {
                 const querySnapshot = await getDocs(collection(db, "registrations"));
-                allPlayersCache = [];
+                tbody.innerHTML = '';
+                allRegistrationsCache = [];
+                let total = 0, sold = 0, unsold = 0;
+
                 querySnapshot.forEach((docSnap) => {
-                    allPlayersCache.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                
-                let bCount = 0, bowlCount = 0, arCount = 0, wkCount = 0;
-                allPlayersCache.forEach(p => {
-                    if(p.role === 'Batsman') bCount++;
-                    else if(p.role === 'Bowler') bowlCount++;
-                    else if(p.role === 'All-Rounder') arCount++;
-                    else if(p.role === 'Wicket Keeper Batsman') wkCount++;
+                    total++;
+                    const p = docSnap.data();
+                    const id = docSnap.id;
+                    p.firebaseId = id;
+                    allRegistrationsCache.push(p);
+
+                    if(p.auctionStatus === 'Sold') sold++;
+                    if(p.auctionStatus === 'Unsold') unsold++;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-slate-800 hover:bg-slate-900/60 transition";
+                    tr.innerHTML = `
+                        <td class="p-3"><img src="${p.photo || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded-lg object-cover border border-slate-700"></td>
+                        <td class="p-3"><strong>${p.fullName}</strong><br><span class="text-xs text-emerald-400">${p.studentId}</span></td>
+                        <td class="p-3">${p.department}<br><span class="text-xs text-slate-400">${p.hostel}</span></td>
+                        <td class="p-3">
+                            <span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-xs block mb-1">${p.role}</span>
+                            <span class="text-xs text-slate-400">${p.battingStyle || ''} | ${p.bowlingStyle || ''}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400' : p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">
+                                ${p.auctionStatus} ${p.soldTeam && p.soldTeam !== '-' ? `(${p.soldTeam} - ₹${p.bidPrice}Cr)` : ''}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center flex items-center justify-center gap-2">
+                            <button onclick="broadcastPlayer('${id}', '${btoa(JSON.stringify(p))}')" class="bg-sky-600/80 hover:bg-sky-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer flex items-center gap-1" title="Broadcast to Captains">
+                                📢 Broadcast
+                            </button>
+                            <button onclick="openModal('${id}', '${p.fullName}', '${p.auctionStatus}', '${p.soldTeam || ''}', '${p.bidPrice || ''}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                                Edit
+                            </button>
+                            <button onclick="deletePlayer('${id}')" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                                Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
                 });
 
-                document.getElementById('countBatsman').innerText = bCount;
-                document.getElementById('countBowler').innerText = bowlCount;
-                document.getElementById('countAllRounder').innerText = arCount;
-                document.getElementById('countWk').innerText = wkCount;
-
-                renderAdminTable(allPlayersCache);
+                document.getElementById('statTotal').innerText = total;
+                document.getElementById('statSold').innerText = sold;
+                document.getElementById('statUnsold').innerText = unsold;
+                loadAuctionHistoryLog();
+                lucide.createIcons();
             } catch (err) {
                 console.error("Error loading players:", err);
             }
         }
 
-        // FILTER & SEARCH ADMIN TABLE
-        window.filterAdminPlayers = function() {
+        window.filterAdminTable = function() {
             const query = document.getElementById('adminSearchInput').value.toLowerCase();
-            const selectedRole = document.getElementById('adminRoleFilter').value;
-
-            const filtered = allPlayersCache.filter(p => {
-                const matchName = p.fullName.toLowerCase().includes(query) || p.studentId.toLowerCase().includes(query);
-                const matchRole = selectedRole === 'All' || p.role === selectedRole;
-                return matchName && matchRole;
+            const rows = document.querySelectorAll('#playerTableBody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
             });
-            renderAdminTable(filtered);
         }
 
-        function renderAdminTable(players) {
-            const tbody = document.getElementById('playerTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            let total = allPlayersCache.length, sold = 0, unsold = 0;
-
-            allPlayersCache.forEach(p => {
-                if(p.auctionStatus === 'Sold') sold++;
-                if(p.auctionStatus === 'Unsold') unsold++;
-            });
-
-            if(players.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">No matching players found.</td></tr>`;
-                return;
-            }
-
-            players.forEach((p) => {
-                const numericPrice = parseFloat(p.bidPrice) || 0;
-                const formattedPrice = formatCurrency(numericPrice);
-
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-800 hover:bg-slate-900/60 transition";
-                tr.innerHTML = `
-                    <td class="p-3"><img src="${p.photo || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded-lg object-cover border border-slate-700"></td>
-                    <td class="p-3"><strong>${p.fullName}</strong><br><span class="text-xs text-emerald-400">${p.studentId}</span></td>
-                    <td class="p-3">${p.department}<br><span class="text-xs text-slate-400">${p.hostel}</span></td>
-                    <td class="p-3"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs">${p.role}</span></td>
-                    <td class="p-3">
-                        <span class="px-2 py-1 rounded text-xs font-semibold ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400' : p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">
-                            ${p.auctionStatus} ${p.auctionStatus === 'Sold' ? '('+formattedPrice+')' : ''}
-                        </span>
-                    </td>
-                    <td class="p-3 text-center flex items-center justify-center gap-2">
-                        <button onclick="broadcastPlayer('${p.id}', '${btoa(JSON.stringify(p))}')" class="bg-sky-600/80 hover:bg-sky-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer flex items-center gap-1" title="Broadcast">
-                            📢 Broadcast
-                        </button>
-                        <button onclick="openModal('${p.id}', '${p.fullName}', '${p.auctionStatus}', '${p.soldTeam || ''}', '${p.bidPrice || ''}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                            Edit
-                        </button>
-                        <button onclick="deletePlayer('${p.id}')" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                            Delete
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statSold').innerText = sold;
-            document.getElementById('statUnsold').innerText = unsold;
-            lucide.createIcons();
-        }
-
-        // HELPER TO FORMAT CURRENCY
-        function formatCurrency(val) {
-            if(!val || val <= 0) return '₹0';
-            const crores = Math.floor(val);
-            const lakhs = Math.round((val - crores) * 100);
-
-            if(crores > 0 && lakhs > 0) {
-                return `₹${crores} Cr ${lakhs} Lakh`;
-            } else if(crores > 0) {
-                return `₹${crores} Cr`;
-            } else {
-                return `₹${lakhs} Lakh`;
-            }
-        }
-
-        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS
+        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS VIA FIRESTORE
         window.broadcastPlayer = async function(id, encodedPlayer) {
             try {
                 const player = JSON.parse(atob(encodedPlayer));
@@ -758,7 +786,8 @@
                     fullName: player.fullName,
                     department: player.department,
                     role: player.role,
-                    style: player.style,
+                    battingStyle: player.battingStyle || '-',
+                    bowlingStyle: player.bowlingStyle || '-',
                     photo: player.photo,
                     auctionStatus: player.auctionStatus || 'Pending',
                     updatedAt: new Date().toISOString()
@@ -770,29 +799,46 @@
             }
         }
 
-        // REAL-TIME LISTENER FOR CAPTAINS' SCREEN (`onSnapshot`)
+        // REAL-TIME LISTENER FOR CAPTAINS' SCREEN (BLANK UNLESS BROADCASTED)
         function listenToLiveBroadcast() {
             onSnapshot(doc(db, "liveAuction", "current"), (docSnap) => {
-                if (docSnap.exists()) {
+                const photoEl = document.getElementById('captainPlayerPhoto');
+                const placeholderEl = document.getElementById('captainPhotoPlaceholder');
+                const nameEl = document.getElementById('captainPlayerName');
+                const metaEl = document.getElementById('captainPlayerMeta');
+                const battingEl = document.getElementById('captainPlayerBatting');
+                const bowlingEl = document.getElementById('captainPlayerBowling');
+                const roleEl = document.getElementById('captainPlayerRole');
+                const statusEl = document.getElementById('captainPlayerStatus');
+
+                if (docSnap.exists() && docSnap.data().fullName) {
                     const player = docSnap.data();
-                    const photoEl = document.getElementById('captainPlayerPhoto');
-                    const placeholderEl = document.getElementById('captainPhotoPlaceholder');
                     
                     if(player.photo && photoEl && placeholderEl) {
                         photoEl.src = player.photo;
                         photoEl.classList.remove('hidden');
                         placeholderEl.classList.add('hidden');
+                    } else if(photoEl && placeholderEl) {
+                        photoEl.classList.add('hidden');
+                        placeholderEl.classList.remove('hidden');
                     }
 
-                    const nameEl = document.getElementById('captainPlayerName');
-                    const metaEl = document.getElementById('captainPlayerMeta');
-                    const styleEl = document.getElementById('captainPlayerStyle');
-                    const statusEl = document.getElementById('captainPlayerStatus');
-
-                    if(nameEl) nameEl.innerText = player.fullName || "Unknown Player";
-                    if(metaEl) metaEl.innerText = `${player.department || ''} • ${player.role || ''}`;
-                    if(styleEl) styleEl.innerText = player.style || '-';
+                    if(nameEl) nameEl.innerText = player.fullName || "";
+                    if(metaEl) metaEl.innerText = `${player.department || ''}`;
+                    if(battingEl) battingEl.innerText = player.battingStyle || '-';
+                    if(bowlingEl) bowlingEl.innerText = player.bowlingStyle || '-';
+                    if(roleEl) roleEl.innerText = player.role || '-';
                     if(statusEl) statusEl.innerText = player.auctionStatus || 'Pending';
+                } else {
+                    // Default Blank State if no active broadcast
+                    if(photoEl) photoEl.classList.add('hidden');
+                    if(placeholderEl) placeholderEl.classList.remove('hidden');
+                    if(nameEl) nameEl.innerText = "Waiting for Admin to Broadcast...";
+                    if(metaEl) metaEl.innerText = "Department & Role will appear here instantly";
+                    if(battingEl) battingEl.innerText = "-";
+                    if(bowlingEl) bowlingEl.innerText = "-";
+                    if(roleEl) roleEl.innerText = "-";
+                    if(statusEl) statusEl.innerText = "-";
                 }
             });
         }
@@ -808,7 +854,6 @@
                 querySnapshot.forEach((docSnap) => {
                     const p = docSnap.data();
                     if(p.auctionStatus !== 'Pending') {
-                        const numericPrice = parseFloat(p.bidPrice) || 0;
                         const card = document.createElement('div');
                         card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-md";
                         card.innerHTML = `
@@ -821,9 +866,10 @@
                             </div>
                             <div class="text-xs space-y-1 text-slate-300 border-t border-slate-800 pt-2">
                                 <div class="flex justify-between"><span>Role:</span> <strong class="text-white">${p.role}</strong></div>
+                                <div class="flex justify-between"><span>Batting/Bowling:</span> <strong class="text-slate-400">${p.battingStyle || ''} | ${p.bowlingStyle || ''}</strong></div>
                                 <div class="flex justify-between"><span>Status:</span> <strong class="${p.auctionStatus === 'Sold' ? 'text-emerald-400' : 'text-amber-400'}">${p.auctionStatus}</strong></div>
                                 <div class="flex justify-between"><span>Team:</span> <strong class="text-white">${p.soldTeam || '-'}</strong></div>
-                                <div class="flex justify-between"><span>Bid Price:</span> <strong class="text-emerald-300">${formatCurrency(numericPrice)}</strong></div>
+                                <div class="flex justify-between"><span>Bid Price:</span> <strong class="text-emerald-300">₹${p.bidPrice || '0'} Cr</strong></div>
                             </div>
                         `;
                         grid.appendChild(card);
@@ -837,97 +883,154 @@
             }
         }
 
-        // DYNAMIC TEAM SQUAD & PURSE SUMMARY VIEW (£100 Cr Start)
-        window.loadTeamSummary = async function() {
-            const container = document.getElementById('teamSummaryContainer');
+        // TEAMS & PURSES MANAGEMENT (ADMIN ONLY)
+        window.loadTeamsAndPurses = async function() {
+            const container = document.getElementById('teamsContainer');
             if(!container) return;
-            container.innerHTML = `<p class="text-slate-400 col-span-2 text-center py-6">Calculating team squads and budgets...</p>`;
+            container.innerHTML = `<p class="text-slate-400 col-span-2 text-center py-6">Loading teams & squads...</p>`;
 
             try {
-                const querySnapshot = await getDocs(collection(db, "registrations"));
-                const teamsMap = {};
+                const teamsSnap = await getDocs(collection(db, "teams"));
+                const regSnap = await getDocs(collection(db, "registrations"));
+                
+                let teamsList = [];
+                teamsSnap.forEach(t => teamsList.push({ id: t.id, ...t.data() }));
 
-                querySnapshot.forEach((docSnap) => {
-                    const p = docSnap.data();
-                    if(p.auctionStatus === 'Sold' && p.soldTeam && p.soldTeam.trim() !== '-' && p.soldTeam.trim() !== '') {
-                        const teamName = p.soldTeam.trim();
-                        if(!teamsMap[teamName]) {
-                            teamsMap[teamName] = {
-                                players: [],
-                                totalSpentNumeric: 0
-                            };
-                        }
-                        const price = parseFloat(p.bidPrice) || 0;
-                        teamsMap[teamName].players.push({ name: p.fullName, role: p.role, priceNumeric: price, photo: p.photo });
-                        teamsMap[teamName].totalSpentNumeric += price;
+                // NO DEFAULT TEAMS: Clean start, only admin created teams appear.
+                let soldPlayersMap = {};
+                regSnap.forEach(r => {
+                    const p = r.data();
+                    if(p.auctionStatus === 'Sold' && p.soldTeam && p.soldTeam !== '-') {
+                        if(!soldPlayersMap[p.soldTeam]) soldPlayersMap[p.soldTeam] = [];
+                        soldPlayersMap[p.soldTeam].push(p);
                     }
                 });
 
                 container.innerHTML = '';
-                const teamNames = Object.keys(teamsMap);
-
-                if(teamNames.length === 0) {
-                    container.innerHTML = `<p class="text-slate-500 col-span-2 text-center py-8">No teams have acquired players yet. Admin needs to mark players as 'Sold' with team names.</p>`;
-                    return;
+                if(teamsList.length === 0) {
+                    container.innerHTML = `<p class="text-slate-400 col-span-2 text-center py-6 italic">No teams created yet. Click "+ Create New Team" above to add teams.</p>`;
                 }
 
-                teamNames.forEach(team => {
-                    const data = teamsMap[team];
-                    const remainingNumeric = Math.max(0, 100 - data.totalSpentNumeric);
+                teamsList.forEach(team => {
+                    const squad = soldPlayersMap[team.name] || [];
+                    const spent = squad.reduce((acc, curr) => acc + Number(curr.bidPrice || 0), 0);
+                    const remainingPurse = 100 - spent;
+
+                    let batsmen = squad.filter(s => s.role === 'Batsman').length;
+                    let bowlers = squad.filter(s => s.role === 'Bowler').length;
+                    let allrounders = squad.filter(s => s.role === 'All-Rounder').length;
+                    let keepers = squad.filter(s => s.role === 'Wicket Keeper Batsman').length;
 
                     const card = document.createElement('div');
                     card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl";
-                    
-                    let playersHtml = '';
-                    data.players.forEach(pl => {
-                        playersHtml += `
-                            <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-xs">
-                                <div class="flex items-center gap-2">
-                                    <img src="${pl.photo || 'https://via.placeholder.com/40'}" class="w-8 h-8 rounded-lg object-cover">
-                                    <div>
-                                        <strong class="text-white">${pl.name}</strong>
-                                        <span class="text-slate-400 block">${pl.role}</span>
-                                    </div>
-                                </div>
-                                <span class="text-emerald-400 font-bold">${formatCurrency(pl.priceNumeric)}</span>
-                            </div>
-                        `;
-                    });
-
                     card.innerHTML = `
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <h3 class="font-bold font-cricket text-xl text-white uppercase tracking-wider">${team}</h3>
-                            <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">Squad: ${data.players.length} Players</span>
+                        <div class="flex items-center justify-between gap-4 border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${team.logo || 'https://via.placeholder.com/80'}" class="w-14 h-14 rounded-xl object-cover border border-emerald-500/40">
+                                <div>
+                                    <h3 class="font-bold text-white text-lg">${team.name}</h3>
+                                    <p class="text-xs text-slate-400">Captain: <strong class="text-emerald-400">${team.captain}</strong> (${team.phone})</p>
+                                </div>
+                            </div>
+                            <button onclick="deleteTeam('${team.id}')" class="text-red-400 hover:text-red-300 text-xs bg-red-500/10 px-2 py-1 rounded cursor-pointer">Delete Team</button>
                         </div>
                         <div class="grid grid-cols-2 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-                            <div><span class="text-slate-400 block">Total Spent:</span> <strong class="text-amber-400">${formatCurrency(data.totalSpentNumeric)}</strong></div>
-                            <div><span class="text-slate-400 block">Remaining Purse:</span> <strong class="text-emerald-400">${formatCurrency(remainingNumeric)}</strong></div>
+                            <div><span class="text-slate-400">Remaining Purse:</span> <strong class="text-emerald-400 text-sm">₹${remainingPurse} Cr</strong></div>
+                            <div><span class="text-slate-400">Total Spent:</span> <strong class="text-amber-400 text-sm">₹${spent} Cr</strong></div>
                         </div>
-                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                            <p class="text-xs font-semibold uppercase text-slate-400 mb-1">Purchased Squad:</p>
-                            ${playersHtml}
+                        <div class="text-xs space-y-1 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block font-semibold mb-1">Squad Role Breakdown:</span>
+                            <div class="flex justify-between"><span>Batsmen:</span> <strong class="text-white">${batsmen}</strong></div>
+                            <div class="flex justify-between"><span>Bowlers:</span> <strong class="text-white">${bowlers}</strong></div>
+                            <div class="flex justify-between"><span>All-Rounders:</span> <strong class="text-white">${allrounders}</strong></div>
+                            <div class="flex justify-between"><span>Wicket Keepers:</span> <strong class="text-white">${keepers}</strong></div>
+                        </div>
+                        <div class="space-y-2">
+                            <span class="text-xs font-semibold text-slate-400 block">Squad Players (${squad.length}):</span>
+                            <div class="max-h-36 overflow-y-auto space-y-1 pr-1">
+                                ${squad.length === 0 ? '<p class="text-xs text-slate-500 italic">No players bought yet.</p>' : squad.map(sp => `
+                                    <div class="flex justify-between items-center bg-slate-950 p-2 rounded-lg text-xs border border-slate-800/60">
+                                        <span class="text-white font-medium">${sp.fullName}</span>
+                                        <span class="text-emerald-400 font-bold">₹${sp.bidPrice} Cr</span>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     `;
                     container.appendChild(card);
                 });
+
+                populateTeamDropdown(teamsList);
             } catch (err) {
-                console.error("Error loading team summary:", err);
+                console.error("Error loading teams & purses:", err);
             }
         }
 
-        // MODAL EDIT FUNCTIONS
-        window.openModal = function(id, name, status, team, priceStr) {
+        function populateTeamDropdown(teams) {
+            const selectEl = document.getElementById('modalTeam');
+            if(!selectEl) return;
+            selectEl.innerHTML = `<option value="-">Select Team</option>`;
+            teams.forEach(t => {
+                selectEl.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+            });
+        }
+
+        window.openTeamManagementModal = function() {
+            document.getElementById('teamManagementModal').classList.remove('hidden');
+        }
+
+        window.closeTeamManagementModal = function() {
+            document.getElementById('teamManagementModal').classList.add('hidden');
+        }
+
+        window.handleTeamCreation = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('newTeamName').value;
+            const captain = document.getElementById('newCaptainName').value;
+            const phone = document.getElementById('newCaptainPhone').value;
+            const fileInput = document.getElementById('newTeamLogoFile');
+
+            const file = fileInput.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = async function(ev) {
+                    try {
+                        await addDoc(collection(db, "teams"), {
+                            name, captain, phone, logo: ev.target.result, purse: 100, createdAt: new Date().toISOString()
+                        });
+                        alert('Team created successfully!');
+                        closeTeamManagementModal();
+                        document.getElementById('newTeamName').value = '';
+                        document.getElementById('newCaptainName').value = '';
+                        document.getElementById('newCaptainPhone').value = '';
+                        fileInput.value = '';
+                        loadTeamsAndPurses();
+                    } catch(err) {
+                        alert('Error saving team.');
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.deleteTeam = async function(teamId) {
+            if(confirm("Are you sure you want to delete this team?")) {
+                try {
+                    await deleteDoc(doc(db, "teams", teamId));
+                    loadTeamsAndPurses();
+                    alert('Team deleted successfully.');
+                } catch(e) {
+                    alert('Error deleting team.');
+                }
+            }
+        }
+
+        // MODAL EDIT & HISTORY LOG
+        window.openModal = function(id, name, status, team, price) {
             document.getElementById('modalPlayerId').value = id;
             document.getElementById('modalStatus').value = status;
-            document.getElementById('modalTeam').value = team;
-            
-            const numericVal = parseFloat(priceStr) || 0;
-            const crores = Math.floor(numericVal);
-            const lakhs = Math.round((numericVal - crores) * 100);
-
-            document.getElementById('modalCrores').value = crores > 0 ? crores : '';
-            document.getElementById('modalLakhs').value = lakhs > 0 ? lakhs : '';
-
+            document.getElementById('modalTeam').value = team || '-';
+            document.getElementById('modalPrice').value = price || '';
             document.getElementById('modalPlayerInfo').innerHTML = `<strong class="text-white text-sm">${name}</strong>`;
             document.getElementById('auctionModal').classList.remove('hidden');
         }
@@ -939,18 +1042,22 @@
         window.saveModalAuction = async function() {
             const id = document.getElementById('modalPlayerId').value;
             const status = document.getElementById('modalStatus').value;
-            const team = document.getElementById('modalTeam').value.trim() || '-';
-            
-            const croresInput = parseFloat(document.getElementById('modalCrores').value) || 0;
-            const lakhsInput = parseFloat(document.getElementById('modalLakhs').value) || 0;
-
-            const finalPriceDecimal = croresInput + (lakhsInput / 100);
+            const team = document.getElementById('modalTeam').value || '-';
+            const price = document.getElementById('modalPrice').value || '0';
 
             try {
+                const playerObj = allRegistrationsCache.find(p => p.firebaseId === id);
+                const playerName = playerObj ? playerObj.fullName : 'Player';
+                const logEntry = {
+                    text: `[${new Date().toLocaleTimeString()}] ${playerName} status updated to ${status} (${team}, ₹${price}Cr)`,
+                    timestamp: new Date().toISOString()
+                };
+                await addDoc(collection(db, "auctionHistory"), logEntry);
+
                 await updateDoc(doc(db, "registrations", id), {
                     auctionStatus: status,
                     soldTeam: team,
-                    bidPrice: finalPriceDecimal.toString()
+                    bidPrice: price
                 });
                 closeModal();
                 loadPlayers();
@@ -959,6 +1066,26 @@
                 console.error("Error updating:", err);
                 alert("Failed to update.");
             }
+        }
+
+        async function loadAuctionHistoryLog() {
+            const logContainer = document.getElementById('auctionHistoryLog');
+            if(!logContainer) return;
+            try {
+                const snap = await getDocs(collection(db, "auctionHistory"));
+                logContainer.innerHTML = '';
+                let logs = [];
+                snap.forEach(s => logs.push(s.data()));
+                logs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                if(logs.length === 0) {
+                    logContainer.innerHTML = `<p class="text-slate-500">No auction actions recorded yet.</p>`;
+                    return;
+                }
+                logs.forEach(l => {
+                    logContainer.innerHTML += `<div class="border-b border-slate-900 pb-1">${l.text}</div>`;
+                });
+            } catch(e) { console.error(e); }
         }
 
         window.deletePlayer = async function(id) {
@@ -971,6 +1098,33 @@
                     console.error("Delete error:", err);
                 }
             }
+        }
+
+        // EXPORT EXCEL REPORT (ADMIN ONLY)
+        window.exportAdminExcel = function() {
+            if(allRegistrationsCache.length === 0) {
+                alert('No registration data available to export.');
+                return;
+            }
+            const exportData = allRegistrationsCache.map((p, index) => ({
+                "S.No": index + 1,
+                "Full Name": p.fullName,
+                "Student ID": p.studentId,
+                "Department": p.department,
+                "Mobile": p.mobile,
+                "Hostel": p.hostel,
+                "Role": p.role,
+                "Batting Style": p.battingStyle || '',
+                "Bowling Style": p.bowlingStyle || '',
+                "Auction Status": p.auctionStatus,
+                "Sold Team": p.soldTeam || '-',
+                "Bid Price (Cr)": p.bidPrice || '0'
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "CPL_Registrations");
+            XLSX.writeFile(workbook, "CURAJ_Premier_League_Registrations.xlsx");
         }
     </script>
 </body>
