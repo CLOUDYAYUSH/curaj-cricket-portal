@@ -1,31 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central University of Rajasthan - CPL Portal & Live Auction</title>
+    <title>CURAJ Premier League - Student Portal & Live Auction</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
-                    }
-                }
-            }
-        }
-    </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SheetJS & jsPDF for Reports Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Outfit:wght@300;400;600;700&display=swap');
         body { font-family: 'Outfit', sans-serif; }
@@ -37,7 +19,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 flex flex-col justify-between transition-colors duration-300">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 flex flex-col justify-between">
 
     <div>
         <!-- Header / Banner -->
@@ -50,14 +32,6 @@
                     Central University of Rajasthan
                 </h1>
                 <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL — Live Player Registration, Auction Hub & Captains' Arena 🏏</p>
-                <p class="text-xs text-slate-400 mt-1 font-mono">Developed by Ayush Gupta</p>
-            </div>
-
-            <!-- Quick Controls: Theme Toggle Header Right -->
-            <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
-                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700 transition" title="Toggle Theme">
-                    <i id="themeIcon" class="fa-solid fa-moon"></i>
-                </button>
             </div>
         </header>
 
@@ -128,7 +102,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">WhatsApp Number *</label>
-                                    <input type="tel" id="mobile" required maxlength="10" oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                    <input type="tel" id="mobile" required oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
                                 </div>
                             </div>
 
@@ -295,7 +269,8 @@
                     </div>
                 </div>
 
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                TabSwitch(tabName) {
+            ['registration', 'pub<div class="glass-card rounded-2xl p-6 shadow-xl">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
                             <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase">Registered Players Directory</h2>
@@ -342,7 +317,7 @@
                 </div>
             </div>
 
-            <!-- Hidden Admin Access Button -->
+            <!-- Hidden Admin Access Button (Auto hides when admin is logged in) -->
             <div id="adminAccessBtnContainer" class="text-center mt-16">
                 <button onclick="showAdminPasswordModal()" class="text-slate-500 hover:text-slate-300 text-xs underline cursor-pointer bg-slate-900/60 px-4 py-2 rounded-lg border border-slate-800">Admin Login / View Hub</button>
             </div>
@@ -350,7 +325,7 @@
         </main>
     </div>
 
-    <!-- SECURE PASSWORD MODAL -->
+    <!-- SECURE PASSWORD MODAL (MASKED INPUT WITH STARS) -->
     <div id="passwordModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-sky-500/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
             <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-2">
@@ -368,7 +343,7 @@
         </div>
     </div>
 
-    <!-- AUCTION EDIT MODAL FOR ADMIN -->
+    <!-- AUCTION EDIT MODAL FOR ADMIN WITH CRORE & LAKH INPUTS -->
     <div id="auctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
             <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Update Auction Details</h3>
@@ -411,10 +386,10 @@
         <p>Designed & Developed with ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
     </footer>
 
-    <!-- Firebase SDK & Core Script -->
+    <!-- Firebase SDK & Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCcuJVNX8nm2njXA8np46a3Xcis13xr4",
@@ -435,26 +410,12 @@
         let allPlayersCache = [];
 
         lucide.createIcons();
-
         document.addEventListener('DOMContentLoaded', () => {
             checkRegistrationStatus();
             loadPlayers();
             loadPublicAuction();
             listenToLiveBroadcast();
         });
-
-        // THEME TOGGLE
-        window.toggleTheme = function() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            if(html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                if(icon) icon.className = "fa-solid fa-sun text-amber-400";
-            } else {
-                html.classList.add('dark');
-                if(icon) icon.className = "fa-solid fa-moon text-slate-300";
-            }
-        }
 
         // REGISTRATION STATUS
         window.checkRegistrationStatus = function() {
@@ -499,8 +460,7 @@
             executeTabSwitch(tabName);
         }
 
-        function executeTabSwitch(tabName) {
-            ['registration', 'public-auction', 'team-summary', 'captain-view'].forEach(t => {
+        function executelic-auction', 'team-summary', 'captain-view'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 const tabEl = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
@@ -520,7 +480,7 @@
             if(tabName === 'team-summary') loadTeamSummary();
         }
 
-        // MASKED PASSWORD MODAL FUNCTIONS
+        // MASKED PASSWORD MODAL FUNCTIONS (STAR DISPLAY)
         window.showAdminPasswordModal = function() {
             showPasswordModal("Admin Login", "Enter Admin Password:", "ADMIN_AYUSH6200", () => {
                 const adminSec = document.getElementById('adminSection');
@@ -615,7 +575,6 @@
             document.getElementById('prevCardMobile').innerText = mobile || "-";
         }
 
-        // HANDLE REGISTRATION WITH STRICT 10-DIGIT & DUPLICATE VALIDATION
         window.handleRegistration = async function(e) {
             e.preventDefault();
             if(localStorage.getItem('cpl_reg_status') === 'closed') {
@@ -623,60 +582,30 @@
                 return;
             }
 
-            const mobileInput = document.getElementById('mobile').value.trim();
-            const studentIdInput = document.getElementById('studentId').value.trim();
-
-            // Strict 10-digit WhatsApp Validation
-            if(!/^\d{10}$/.test(mobileInput)) {
-                alert('Please enter a valid 10-digit WhatsApp number!');
-                document.getElementById('mobile').focus();
-                return;
-            }
-
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.innerText = "Submitting to Database...";
             submitBtn.disabled = true;
 
+            const batting = document.getElementById('battingStyle').value;
+            const bowling = document.getElementById('bowlingStyle').value;
+            const combinedStyle = `${batting} / ${bowling}`;
+
+            const playerData = {
+                photo: studentPhotoData || '',
+                fullName: document.getElementById('fullName').value,
+                studentId: document.getElementById('studentId').value,
+                department: document.getElementById('department').value,
+                mobile: document.getElementById('mobile').value,
+                hostel: document.getElementById('hostel').value,
+                role: document.getElementById('cricketRole').value,
+                style: combinedStyle,
+                auctionStatus: 'Pending',
+                soldTeam: '-',
+                bidPrice: '0',
+                createdAt: new Date().toISOString()
+            };
+
             try {
-                // Check for duplicate student ID or mobile number
-                const qId = query(collection(db, "registrations"), where("studentId", "==", studentIdInput));
-                const qMob = query(collection(db, "registrations"), where("mobile", "==", mobileInput));
-                const [snapId, snapMob] = await Promise.all([getDocs(qId), getDocs(qMob)]);
-
-                if(!snapId.empty) {
-                    alert('Error: This Student ID / Enrollment No is already registered!');
-                    submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
-                    submitBtn.disabled = false;
-                    lucide.createIcons();
-                    return;
-                }
-                if(!snapMob.empty) {
-                    alert('Error: This WhatsApp number is already registered!');
-                    submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
-                    submitBtn.disabled = false;
-                    lucide.createIcons();
-                    return;
-                }
-
-                const batting = document.getElementById('battingStyle').value;
-                const bowling = document.getElementById('bowlingStyle').value;
-                const combinedStyle = `${batting} / ${bowling}`;
-
-                const playerData = {
-                    photo: studentPhotoData || '',
-                    fullName: document.getElementById('fullName').value.trim(),
-                    studentId: studentIdInput,
-                    department: document.getElementById('department').value.trim(),
-                    mobile: mobileInput,
-                    hostel: document.getElementById('hostel').value.trim(),
-                    role: document.getElementById('cricketRole').value,
-                    style: combinedStyle,
-                    auctionStatus: 'Pending',
-                    soldTeam: '-',
-                    bidPrice: '0',
-                    createdAt: new Date().toISOString()
-                };
-
                 await addDoc(collection(db, "registrations"), playerData);
                 alert('Registration completed & saved to Firebase successfully!');
                 document.getElementById('registrationForm').reset();
@@ -741,11 +670,11 @@
 
         // FILTER & SEARCH ADMIN TABLE
         window.filterAdminPlayers = function() {
-            const queryVal = document.getElementById('adminSearchInput').value.toLowerCase();
+            const query = document.getElementById('adminSearchInput').value.toLowerCase();
             const selectedRole = document.getElementById('adminRoleFilter').value;
 
             const filtered = allPlayersCache.filter(p => {
-                const matchName = p.fullName.toLowerCase().includes(queryVal) || p.studentId.toLowerCase().includes(queryVal);
+                const matchName = p.fullName.toLowerCase().includes(query) || p.studentId.toLowerCase().includes(query);
                 const matchRole = selectedRole === 'All' || p.role === selectedRole;
                 return matchName && matchRole;
             });
