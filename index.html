@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPL Pro Auction Portal - Live</title>
+    <title>Central University of Rajasthan - CPL Portal & Live Auction</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,738 +18,1030 @@
             }
         }
     </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    <!-- SheetJS & jsPDF for Reports -->
+    <!-- SheetJS & jsPDF for Reports Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Outfit:wght@300;400;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; }
+        .font-cricket { font-family: 'Teko', sans-serif; letter-spacing: 1px; }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 flex flex-col justify-between transition-colors duration-300">
 
-    <!-- TOP NAVIGATION BAR -->
-    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-green-600 text-white p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10 shadow">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-wide">CPL Pro Auction</h1>
-                    <p class="text-xs text-slate-400">Live Auction & Management Portal</p>
-                </div>
+    <div>
+        <!-- Header / Banner -->
+        <header class="relative border-b border-sky-500/30 py-20 px-4 text-center overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-85" style="background-image: url('https://cdn.collegewollege.com/storage/colleges/branding/ZEQgdsCVJhnDJaziqGDr6ZYdfCs6MgvGrO3pXrHd.webp');"></div>
+            <div class="absolute inset-0 bg-slate-950/25"></div>
+
+            <div class="max-w-4xl mx-auto relative z-10 flex flex-col items-center justify-center">
+                <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
+                    Central University of Rajasthan
+                </h1>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL — Live Player Registration, Auction Hub & Captains' Arena 🏏</p>
+                <p class="text-xs text-slate-400 mt-1 font-mono">Developed by Ayush Gupta</p>
             </div>
-            
-            <div class="flex items-center space-x-3">
-                <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition" title="Toggle Theme">
+
+            <!-- Quick Controls: Theme Toggle Header Right -->
+            <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700 transition" title="Toggle Theme">
                     <i id="themeIcon" class="fa-solid fa-moon"></i>
                 </button>
-                
-                <!-- Admin Login Button / Status -->
-                <div id="authNavContainer">
-                    <button onclick="openAdminModal()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-semibold shadow transition flex items-center space-x-2">
-                        <i class="fa-solid fa-lock"></i>
-                        <span>Admin Login</span>
-                    </button>
-                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- MAIN APP CONTAINER -->
-    <main class="flex-grow max-w-7xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-        <!-- LEFT PANEL: CONTROLS & NAVIGATION -->
-        <section class="lg:col-span-1 space-y-4">
-            <!-- Navigation Tabs -->
-            <div class="bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-sm flex flex-col space-y-1">
-                <button onclick="switchTab('auction')" id="tab-auction" class="w-full text-left px-4 py-2.5 rounded-lg font-medium bg-green-600 text-white transition flex items-center space-x-3">
-                    <i class="fa-solid fa-gavel w-5"></i><span>Live Auction</span>
+        <!-- Navigation Tabs -->
+        <nav class="max-w-6xl mx-auto px-4 mt-6">
+            <div class="flex border-b border-slate-800 gap-4 overflow-x-auto justify-center">
+                <button onclick="switchTab('registration')" id="tab-registration" class="py-3 px-6 text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 cursor-pointer transition">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i> Registration Form
                 </button>
-                <button onclick="switchTab('register')" id="tab-register" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-slate-300 hover:bg-slate-700 transition flex items-center space-x-3">
-                    <i class="fa-solid fa-user-plus w-5"></i><span>Player Registration</span>
+                <button onclick="switchTab('public-auction')" id="tab-public-auction" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                    <i data-lucide="gavel" class="w-4 h-4"></i> Auction Status Hub
                 </button>
-                <button onclick="switchTab('squads')" id="tab-squads" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-slate-300 hover:bg-slate-700 transition flex items-center space-x-3">
-                    <i class="fa-solid fa-shield-halved w-5"></i><span>Team Squads & Purse</span>
+                <button onclick="switchTab('team-summary')" id="tab-team-summary" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Team Squads & Purse
                 </button>
-                <button onclick="switchTab('reports')" id="tab-reports" class="w-full text-left px-4 py-2.5 rounded-lg font-medium text-slate-300 hover:bg-slate-700 transition flex items-center space-x-3">
-                    <i class="fa-solid fa-file-excel w-5"></i><span>Reports & Export</span>
+                <button onclick="switchTab('captain-view')" id="tab-captain-view" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 cursor-pointer transition">
+                    <i data-lucide="monitor-play" class="w-4 h-4"></i> Captains' Screen
                 </button>
             </div>
+        </nav>
 
-            <!-- Live Status & Quick Stats Widget -->
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm space-y-3">
-                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tournament Stats</h3>
-                <div class="grid grid-cols-2 gap-2 text-center">
-                    <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-700">
-                        <span id="statTotalPlayers" class="text-xl font-bold text-green-400">0</span>
-                        <p class="text-xs text-slate-400 mt-1">Registered</p>
+        <!-- Main Content Container -->
+        <main class="max-w-6xl mx-auto px-4 mt-8">
+
+            <!-- TAB 1: STUDENT REGISTRATION SECTION -->
+            <div id="section-registration" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7">
+                    <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative">
+                        <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-6 border-b border-slate-800 pb-3">
+                            <i data-lucide="clipboard-list"></i> CPL Player Registration
+                        </h2>
+
+                        <!-- REGISTRATION CLOSED BANNER -->
+                        <div id="closedMessage" class="hidden bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-8 text-center my-6 space-y-3">
+                            <i data-lucide="lock" class="w-12 h-12 text-amber-400 mx-auto"></i>
+                            <h3 class="text-2xl font-bold text-amber-400 font-cricket uppercase tracking-wide">Registrations Are Currently Closed!</h3>
+                            <p class="text-sm text-slate-300">The CPL team has currently closed the registration portal.</p>
+                        </div>
+
+                        <!-- REGISTRATION FORM -->
+                        <form id="registrationForm" onsubmit="handleRegistration(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Student Photo *</label>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-14 h-14 rounded-xl border border-dashed border-emerald-500/40 bg-slate-900 flex items-center justify-center overflow-hidden shrink-0">
+                                        <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Photo">
+                                        <i id="photoIcon" data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
+                                    </div>
+                                    <input type="file" id="studentPhoto" accept="image/*" required onchange="previewFile(event, 'photoPreview', 'photoIcon')" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 cursor-pointer">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Full Name *</label>
+                                    <input type="text" id="fullName" required oninput="updatePreview()" placeholder="e.g. Ayush Gupta" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Student ID / Enrollment No *</label>
+                                    <input type="text" id="studentId" required oninput="updatePreview()" placeholder="e.g. 2024CURAJ..." class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Department *</label>
+                                    <input type="text" id="department" required oninput="updatePreview()" placeholder="e.g. Computer Science" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">WhatsApp Number *</label>
+                                    <input type="tel" id="mobile" required maxlength="10" oninput="updatePreview()" placeholder="10-digit number" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Hostel Name & Room No *</label>
+                                    <input type="text" id="hostel" required oninput="updatePreview()" placeholder="e.g. B-4, Room 204" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Primary Role *</label>
+                                    <select id="cricketRole" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                        <option value="Batsman">Batsman</option>
+                                        <option value="Bowler">Bowler</option>
+                                        <option value="All-Rounder">All-Rounder</option>
+                                        <option value="Wicket Keeper Batsman">Wicket Keeper Batsman</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- SEPARATED BATTING & BOWLING STYLE DROPDOWNS -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Batting Style *</label>
+                                    <select id="battingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                        <option value="Right-Handed Bat">Right-Handed Bat</option>
+                                        <option value="Left-Handed Bat">Left-Handed Bat</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bowling Style *</label>
+                                    <select id="bowlingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                        <option value="Right-Arm Fast">Right-Arm Fast</option>
+                                        <option value="Right-Arm Spin">Right-Arm Spin</option>
+                                        <option value="Left-Arm Fast">Left-Arm Fast</option>
+                                        <option value="Left-Arm Spin">Left-Arm Spin</option>
+                                        <option value="Non-Bowler">Non-Bowler</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition">
+                                <i data-lucide="check-circle"></i> Submit Registration
+                            </button>
+                        </form>
                     </div>
-                    <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-700">
-                        <span id="statSoldPlayers" class="text-xl font-bold text-blue-400">0</span>
-                        <p class="text-xs text-slate-400 mt-1">Sold</p>
+                </div>
+
+                <!-- Registration Live Preview Card -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="glass-card rounded-2xl p-6 text-center border-t-4 border-emerald-500 shadow-2xl sticky top-6">
+                        <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase tracking-wider mb-4">Registration Live Preview</h3>
+                        <div id="livePreviewContainer" class="bg-slate-900/95 rounded-2xl p-5 border border-slate-800 text-left space-y-4 shadow-inner">
+                            <div class="flex items-center gap-4">
+                                <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
+                                    <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Photo">
+                                    <i id="prevCardPhotoIcon" data-lucide="user" class="w-8 h-8 text-slate-500"></i>
+                                </div>
+                                <div>
+                                    <h4 id="prevCardName" class="font-bold text-white text-lg">Not Submitted Yet</h4>
+                                    <p id="prevCardId" class="text-xs text-emerald-400 font-medium">Enrollment ID</p>
+                                </div>
+                            </div>
+                            <div class="text-sm space-y-2 text-slate-300 border-t border-slate-800 pt-3">
+                                <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">Batsman</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Batting:</strong> <span id="prevCardBatting" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Bowling:</strong> <span id="prevCardBowling" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white">-</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Admin Quick Actions (Visible only when logged in) -->
-            <div id="adminQuickControls" class="hidden bg-slate-800 p-4 rounded-xl border border-amber-500/30 shadow-sm space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-amber-400 flex items-center space-x-2">
-                        <i class="fa-solid fa-user-shield"></i><span>Admin Controls</span>
-                    </h3>
-                    <span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono">Active</span>
-                </div>
-                <div class="space-y-2">
-                    <button onclick="openTeamModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center justify-between">
-                        <span><i class="fa-solid fa-plus-circle mr-2 text-green-400"></i>Create Team & Captain</span>
-                        <i class="fa-solid fa-chevron-right text-slate-400"></i>
-                    </button>
-                    <button onclick="triggerAuctionClose()" class="w-full bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center justify-between">
-                        <span><i class="fa-solid fa-power-off mr-2"></i>Close Auction & Notify</span>
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- CENTER / RIGHT PANEL: DYNAMIC CONTENT AREA -->
-        <section class="lg:col-span-3">
-
-            <!-- TAB 1: LIVE AUCTION VIEW -->
-            <div id="content-auction" class="space-y-4">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden">
-                    <div class="absolute top-0 right-0 transform translate-x-6 -translate-y-6 w-32 h-32 bg-green-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                    
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-700 gap-4">
+            <!-- TAB 2: PUBLIC AUCTION HUB -->
+            <div id="section-public-auction" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
-                            <span id="auctionStatusBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Live Bidding</span>
-                            <h2 class="text-2xl font-black mt-1" id="currentAuctionPlayerName">Select Player to Auction</h2>
-                        </div>
-                        <!-- Quick Search & Filter Bar -->
-                        <div class="flex items-center space-x-2 w-full md:w-auto">
-                            <input type="text" id="auctionSearchInput" oninput="filterAuctionPlayers()" placeholder="Search player..." class="bg-slate-900 border border-slate-700 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-green-500 w-full md:w-48">
-                            <select id="auctionStyleFilter" onchange="filterAuctionPlayers()" class="bg-slate-900 border border-slate-700 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-green-500">
-                                <option value="">All Styles</option>
-                                <option value="Right-hand Bat">Right Bat</option>
-                                <option value="Left-hand Bat">Left Bat</option>
-                                <option value="Spin">Spin</option>
-                                <option value="Pace">Pace</option>
-                            </select>
+                            <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase flex items-center gap-2">
+                                <i data-lucide="gavel"></i> Live Auction Player Status
+                            </h2>
+                            <p class="text-xs text-slate-400">Official live player auction records and team details.</p>
                         </div>
                     </div>
-
-                    <!-- Active Player Showcase Area -->
-                    <div id="activePlayerCardContainer" class="py-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                        <div class="flex justify-center">
-                            <img id="activePlayerPhoto" src="https://via.placeholder.com/150" alt="Player Photo" class="w-36 h-36 object-cover rounded-xl border-2 border-slate-700 shadow-md">
-                        </div>
-                        <div class="md:col-span-2 space-y-2">
-                            <div class="flex flex-wrap gap-2" id="activePlayerTags">
-                                <span class="bg-slate-700 text-xs px-2.5 py-1 rounded-full font-medium" id="tagRole">Role: -</span>
-                                <span class="bg-slate-700 text-xs px-2.5 py-1 rounded-full font-medium" id="tagBatting">Batting: -</span>
-                                <span class="bg-slate-700 text-xs px-2.5 py-1 rounded-full font-medium" id="tagBowling">Bowling: -</span>
-                            </div>
-                            <p class="text-sm text-slate-400">Base Price: <strong class="text-green-400" id="activePlayerBasePrice">₹ 0 L</strong></p>
-                            <p class="text-xs text-slate-500">Enrollment ID: <span id="activePlayerEnrol" class="font-mono">-</span></p>
-                        </div>
-                    </div>
-
-                    <!-- Admin Bidding Control Panel (Protected / Hidden for normal users) -->
-                    <div id="adminAuctionControls" class="hidden pt-4 border-t border-slate-700 flex flex-wrap gap-3 items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <select id="soldTeamSelect" class="bg-slate-900 border border-slate-700 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-green-500">
-                                <option value="">Select Team for Sale</option>
-                            </select>
-                            <input type="number" id="soldAmountInput" placeholder="Sold Price (₹)" class="bg-slate-900 border border-slate-700 text-sm px-3 py-2 rounded-lg w-32 focus:outline-none focus:border-green-500">
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="markPlayerSold()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg text-sm shadow transition flex items-center space-x-1">
-                                <i class="fa-solid fa-gavel"></i><span>SOLD</span>
-                            </button>
-                            <button onclick="markPlayerUnsold()" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg text-sm shadow transition flex items-center space-x-1">
-                                <i class="fa-solid fa-xmark"></i><span>UNSOLD</span>
-                            </button>
-                            <button onclick="undoLastAction()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3 py-2 rounded-lg text-sm shadow transition" title="Undo Last Action">
-                                <i class="fa-solid fa-rotate-left"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="publicAuctionGrid"></div>
                 </div>
+            </div>
 
-                <!-- Players Queue / List for Auction -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm space-y-3">
-                    <h3 class="text-sm font-bold text-slate-300">Unsold Queue</h3>
-                    <div id="auctionQueueList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-1">
-                        <!-- Populated dynamically via JS -->
+            <!-- TAB 3: TEAM SQUADS & PURSE SUMMARY -->
+            <div id="section-team-summary" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold font-cricket text-emerald-400 uppercase flex items-center gap-2">
+                            <i data-lucide="shield-check"></i> Team Squads & Remaining Purse (£100 Cr Start)
+                        </h2>
+                        <p class="text-xs text-slate-400">Automatic team-wise division, budget deductions, and player rosters based on live auction records.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="teamSummaryContainer"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CAPTAINS' LIVE BROADCAST SCREEN -->
+            <div id="section-captain-view" class="hidden space-y-6">
+                <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-sky-500/40 text-center max-w-3xl mx-auto">
+                    <div class="inline-block bg-sky-500/20 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border border-sky-500/30 animate-pulse">
+                        🔴 Live Auction Broadcast (Captains' Screen)
+                    </div>
+
+                    <div id="captainLiveDisplay" class="space-y-6">
+                        <div class="w-40 h-40 md:w-52 md:h-52 mx-auto rounded-2xl bg-slate-900 border-4 border-emerald-500/60 shadow-2xl overflow-hidden flex items-center justify-center">
+                            <img id="captainPlayerPhoto" src="" alt="Player Photo" class="w-full h-full object-cover hidden">
+                            <i id="captainPhotoPlaceholder" data-lucide="user" class="w-16 h-16 text-slate-600"></i>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 id="captainPlayerName" class="text-3xl md:text-5xl font-extrabold font-cricket uppercase text-white tracking-wide">Waiting for Admin to Broadcast...</h2>
+                            <p id="captainPlayerMeta" class="text-emerald-400 font-semibold text-lg">Department & Role will appear here instantly</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-left text-sm">
+                            <div><span class="text-slate-400 block text-xs">Playing Style:</span> <strong id="captainPlayerStyle" class="text-white">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs">Auction Status:</span> <strong id="captainPlayerStatus" class="text-amber-400">-</strong></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: PLAYER REGISTRATION -->
-            <div id="content-register" class="hidden space-y-4">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg max-w-2xl mx-auto">
-                    <h2 class="text-xl font-bold mb-4 flex items-center space-x-2">
-                        <i class="fa-solid fa-user-plus text-green-500"></i>
-                        <span>Player Registration Portal</span>
-                    </h2>
-                    <form id="playerRegistrationForm" onsubmit="handlePlayerRegistration(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">Full Name</label>
-                                <input type="text" id="regName" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">Enrollment ID</label>
-                                <input type="text" id="regEnrol" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                            </div>
-                        </div>
+            <!-- SECRET ADMIN PANEL -->
+            <div id="adminSection" class="hidden space-y-8 mt-6">
+                <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900 p-5 rounded-2xl border border-emerald-500/30 gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase">🛡️ Admin Control Panel</h3>
+                        <p class="text-xs text-slate-400">Manage registrations, broadcast players to captains, and update bidding statuses.</p>
+                    </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">WhatsApp Number (10 Digits)</label>
-                                <input type="tel" id="regPhone" required maxlength="10" placeholder="9876543210" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">Playing Role</label>
-                                <select id="regRole" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                                    <option value="Batsman">Batsman</option>
-                                    <option value="Bowler">Bowler</option>
-                                    <option value="All-Rounder">All-Rounder</option>
-                                    <option value="Wicket-Keeper">Wicket-Keeper</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-3 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-300">Registration Portal:</span>
+                        <button id="toggleRegBtn" onclick="toggleRegistrationStatus()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                        </button>
+                    </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">Batting Style</label>
-                                <select id="regBattingStyle" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                                    <option value="Right-hand Bat">Right-hand Bat</option>
-                                    <option value="Left-hand Bat">Left-hand Bat</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">Bowling Style</label>
-                                <select id="regBowlingStyle" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                                    <option value="None">None / NA</option>
-                                    <option value="Spin">Spin</option>
-                                    <option value="Pace">Pace</option>
-                                </select>
-                            </div>
-                        </div>
+                    <button onclick="hideAdmin()" class="bg-red-600/80 hover:bg-red-600 text-white text-xs px-4 py-2 rounded-xl cursor-pointer">Close Admin</button>
+                </div>
 
+                <!-- ROLE-WISE BREAKDOWN COUNTER CARDS FOR ADMIN -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-slate-900 border border-sky-500/30 rounded-2xl p-4 text-center">
+                        <span class="text-xs uppercase text-slate-400 block font-semibold">Batsmen</span>
+                        <span id="countBatsman" class="text-2xl font-bold font-cricket text-sky-400">0</span>
+                    </div>
+                    <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 text-center">
+                        <span class="text-xs uppercase text-slate-400 block font-semibold">Bowlers</span>
+                        <span id="countBowler" class="text-2xl font-bold font-cricket text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-4 text-center">
+                        <span class="text-xs uppercase text-slate-400 block font-semibold">All-Rounders</span>
+                        <span id="countAllRounder" class="text-2xl font-bold font-cricket text-amber-400">0</span>
+                    </div>
+                    <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 text-center">
+                        <span class="text-xs uppercase text-slate-400 block font-semibold">Wicket Keepers</span>
+                        <span id="countWk" class="text-2xl font-bold font-cricket text-purple-400">0</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Player Photo</label>
-                            <input type="file" id="regPhoto" accept="image/*" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700">
+                            <h2 class="text-xl font-bold font-cricket text-emerald-400 uppercase">Registered Players Directory</h2>
+                            <p class="text-xs text-slate-400">Search and filter players, or click 📢 **Broadcast** for captains' screens.</p>
                         </div>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <!-- Search & Filter Controls -->
+                            <input type="text" id="adminSearchInput" oninput="filterAdminPlayers()" placeholder="Search name/ID..." class="bg-slate-950 border border-slate-700 text-xs text-white px-3 py-2 rounded-lg outline-none focus:border-emerald-500">
+                            <select id="adminRoleFilter" onchange="filterAdminPlayers()" class="bg-slate-950 border border-slate-700 text-xs text-white px-3 py-2 rounded-lg outline-none focus:border-emerald-500">
+                                <option value="All">All Roles</option>
+                                <option value="Batsman">Batsman</option>
+                                <option value="Bowler">Bowler</option>
+                                <option value="All-Rounder">All-Rounder</option>
+                                <option value="Wicket Keeper Batsman">Wicket Keeper</option>
+                            </select>
 
-                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg text-sm shadow transition">
-                            Submit Registration
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- TAB 3: TEAM SQUADS & PURSE -->
-            <div id="content-squads" class="hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-bold">Team Squads & Purse Balances</h2>
-                    <span class="text-xs bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg font-mono">Default Purse: ₹100 Cr</span>
-                </div>
-                <div id="teamsSquadsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Populated dynamically via JS -->
-                </div>
-            </div>
-
-            <!-- TAB 4: REPORTS & EXPORT -->
-            <div id="content-reports" class="hidden space-y-4">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
-                    <h2 class="text-xl font-bold flex items-center space-x-2">
-                        <i class="fa-solid fa-file-excel text-green-500"></i>
-                        <span>Reports & Data Export</span>
-                    </h2>
-                    <p class="text-sm text-slate-400">Download comprehensive records of registered players, sold players, and complete team squads in Excel or PDF format.</p>
-                    
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <button onclick="exportToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow transition flex items-center space-x-2">
-                            <i class="fa-solid fa-file-excel"></i><span>Export Registered Players (Excel)</span>
-                        </button>
-                        <button onclick="exportSquadsPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow transition flex items-center space-x-2">
-                            <i class="fa-solid fa-file-pdf"></i><span>Export Team Squads (PDF)</span>
-                        </button>
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
+                                Total: <span id="statTotal" class="font-bold text-white">0</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
+                                Sold: <span id="statSold" class="font-bold text-emerald-400">0</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-center text-xs">
+                                Unsold: <span id="statUnsold" class="font-bold text-amber-400">0</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Auction History Log -->
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-3">
-                    <h3 class="text-lg font-bold">Complete Auction History</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-700/50 text-xs uppercase text-slate-400 border-b border-slate-700">
+                            <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-slate-800">
                                 <tr>
-                                    <th class="p-3">Player</th>
-                                    <th class="p-3">Team</th>
-                                    <th class="p-3">Sold Price</th>
-                                    <th class="p-3">Time</th>
+                                    <th class="p-3">Photo</th>
+                                    <th class="p-3">Name / ID</th>
+                                    <th class="p-3">Department & Hostel</th>
+                                    <th class="p-3">Role</th>
+                                    <th class="p-3">Auction Status</th>
+                                    <th class="p-3 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="auctionHistoryTableBody" class="divide-y divide-slate-700">
-                                <!-- Populated dynamically -->
-                            </tbody>
+                            <tbody id="playerTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-        </section>
-    </main>
+            <!-- Hidden Admin Access Button -->
+            <div id="adminAccessBtnContainer" class="text-center mt-16">
+                <button onclick="showAdminPasswordModal()" class="text-slate-500 hover:text-slate-300 text-xs underline cursor-pointer bg-slate-900/60 px-4 py-2 rounded-lg border border-slate-800">Admin Login / View Hub</button>
+            </div>
 
-    <!-- ADMIN LOGIN MODAL -->
-    <div id="adminModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl max-w-md w-full space-y-4 shadow-2xl relative">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold flex items-center space-x-2"><i class="fa-solid fa-shield-halved text-green-500"></i><span>Admin Secure Login</span></h3>
-            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Admin Email</label>
-                    <input type="email" id="adminEmail" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Password</label>
-                    <input type="password" id="adminPassword" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
-                </div>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg text-sm shadow transition">Login as Admin</button>
-            </form>
+        </main>
+    </div>
+
+    <!-- SECURE PASSWORD MODAL -->
+    <div id="passwordModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-sky-500/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-2">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <h3 id="modalTitle" class="text-xl font-bold font-cricket text-white uppercase">Enter Password</h3>
+            <p id="modalDesc" class="text-xs text-slate-400">Please enter the security password to proceed.</p>
+            
+            <input type="password" id="modalPasswordInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-3 text-white text-center tracking-widest outline-none text-sm">
+            
+            <div class="flex gap-3 pt-2">
+                <button onclick="verifyPassword()" class="w-1/2 bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer transition">Submit</button>
+                <button onclick="closePasswordModal()" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl text-xs cursor-pointer transition">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!-- CREATE TEAM MODAL -->
-    <div id="teamModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl max-w-md w-full space-y-4 shadow-2xl relative">
-            <button onclick="closeTeamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold flex items-center space-x-2"><i class="fa-solid fa-shield text-green-500"></i><span>Create New Team & Captain</span></h3>
-            <form onsubmit="handleTeamCreation(event)" class="space-y-3">
+    <!-- AUCTION EDIT MODAL FOR ADMIN -->
+    <div id="auctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+            <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Update Auction Details</h3>
+            <div id="modalPlayerInfo" class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
+            <input type="hidden" id="modalPlayerId">
+            <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Team Name</label>
-                    <input type="text" id="teamNameInput" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Auction Status</label>
+                    <select id="modalStatus" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
+                        <option value="Pending">Pending (Hidden from Public)</option>
+                        <option value="Sold">Sold</option>
+                        <option value="Unsold">Unsold</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Captain Name</label>
-                    <input type="text" id="captainNameInput" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Sold Team Name</label>
+                    <input type="text" id="modalTeam" placeholder="e.g. CURAJ Mavericks" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Captain Phone Number (WhatsApp)</label>
-                    <input type="tel" id="captainPhoneInput" required maxlength="10" placeholder="9876543210" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-green-500">
+                <!-- Separate Bid Price Inputs for Crores and Lakhs -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bid Price (Crores)</label>
+                        <input type="number" id="modalCrores" min="0" placeholder="e.g. 1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bid Price (Lakhs)</label>
+                        <input type="number" id="modalLakhs" min="0" max="99" step="5" placeholder="e.g. 20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Team Logo / Banner</label>
-                    <input type="file" id="teamLogoInput" accept="image/*" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-600 file:text-white">
-                </div>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg text-sm shadow transition">Create Team</button>
-            </form>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="saveModalAuction()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-xl text-sm cursor-pointer">Save Details</button>
+                <button onclick="closeModal()" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl text-sm cursor-pointer">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!-- AUDIO EFFECTS -->
-    <audio id="soldSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
-    <audio id="unsoldSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+    <!-- Developer Credit Footer -->
+    <footer class="mt-20 py-6 text-center border-t border-slate-900 text-slate-500 text-xs">
+        <p>Designed & Developed with ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
+    </footer>
 
-    <!-- CORE JAVASCRIPT LOGIC -->
-    <script>
-        // FIREBASE CONFIGURATION (Replace with your Firebase project credentials)
+    <!-- Firebase SDK & Core Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCcuJVNX8nm2njXA8np46a3Xcis13xr4",
+            authDomain: "curaj-cricket-portal.firebaseapp.com",
+            projectId: "curaj-cricket-portal",
+            storageBucket: "curaj-cricket-portal.firebasestorage.app",
+            messagingSenderId: "18988312113",
+            appId: "1:18988312113:web:a877183b63891c4788d718",
+            measurementId: "G-YCOTJK65"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // Application State
-        let currentUserRole = 'guest'; // 'admin' or 'guest'
-        let registeredPlayers = [];
-        let teamsList = [];
-        let auctionHistory = [];
-        let currentActivePlayer = null;
-        let lastActionState = null; // For Undo feature
+        let studentPhotoData = '';
+        let isCaptainAuthenticated = false;
+        let currentAuthCallback = null;
+        let allPlayersCache = [];
 
-        // Initialize Real-time Listeners
-        window.addEventListener('DOMContentLoaded', () => {
-            initFirebaseListeners();
+        lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRegistrationStatus();
+            loadPlayers();
+            loadPublicAuction();
+            listenToLiveBroadcast();
         });
 
-        function initFirebaseListeners() {
-            // Listen to Players
-            db.collection("players").onSnapshot(snapshot => {
-                registeredPlayers = [];
-                snapshot.forEach(doc => {
-                    registeredPlayers.push({ id: doc.id, ...doc.data() });
-                });
-                updateStats();
-                renderAuctionQueue();
-            });
-
-            // Listen to Teams
-            db.collection("teams").onSnapshot(snapshot => {
-                teamsList = [];
-                snapshot.forEach(doc => {
-                    teamsList.push({ id: doc.id, ...doc.data() });
-                });
-                renderTeamsSquads();
-                updateTeamDropdowns();
-            });
-
-            // Listen to Auction History
-            db.collection("history").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-                auctionHistory = [];
-                snapshot.forEach(doc => {
-                    auctionHistory.push({ id: doc.id, ...doc.data() });
-                });
-                renderAuctionHistory();
-            });
-        }
-
-        // Tab Switching
-        function switchTab(tabId) {
-            ['auction', 'register', 'squads', 'reports'].forEach(t => {
-                document.getElementById(`content-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('bg-green-600', 'text-white');
-                document.getElementById(`tab-${t}`).classList.add('text-slate-300', 'hover:bg-slate-700');
-            });
-            document.getElementById(`content-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}`).classList.add('bg-green-600', 'text-white');
-            document.getElementById(`tab-${tabId}`).classList.remove('text-slate-300', 'hover:bg-slate-700');
-        }
-
-        // Theme Toggle
-        function toggleTheme() {
+        // THEME TOGGLE
+        window.toggleTheme = function() {
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
-            if (html.classList.contains('dark')) {
+            if(html.classList.contains('dark')) {
                 html.classList.remove('dark');
-                icon.classList.replace('fa-moon', 'fa-sun');
+                if(icon) icon.className = "fa-solid fa-sun text-amber-400";
             } else {
                 html.classList.add('dark');
-                icon.classList.replace('fa-sun', 'fa-moon');
+                if(icon) icon.className = "fa-solid fa-moon text-slate-300";
             }
         }
 
-        // Admin Modal Controls
-        function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
-        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
-        function openTeamModal() { document.getElementById('teamModal').classList.remove('hidden'); }
-        function closeTeamModal() { document.getElementById('teamModal').classList.add('hidden'); }
+        // REGISTRATION STATUS
+        window.checkRegistrationStatus = function() {
+            const isOpen = localStorage.getItem('cpl_reg_status') !== 'closed';
+            const form = document.getElementById('registrationForm');
+            const closedMsg = document.getElementById('closedMessage');
+            const toggleBtn = document.getElementById('toggleRegBtn');
 
-        // Firebase Admin Login
-        function handleAdminLogin(e) {
+            if(isOpen) {
+                if(form) form.classList.remove('hidden');
+                if(closedMsg) closedMsg.classList.add('hidden');
+                if(toggleBtn) {
+                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                    toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> OPEN (Click to Close)`;
+                }
+            } else {
+                if(form) form.classList.add('hidden');
+                if(closedMsg) closedMsg.classList.remove('hidden');
+                if(toggleBtn) {
+                    toggleBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-red-500/20 text-red-400 border border-red-500/40";
+                    toggleBtn.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> CLOSED (Click to Open)`;
+                }
+            }
+        }
+
+        window.toggleRegistrationStatus = function() {
+            const currentStatus = localStorage.getItem('cpl_reg_status');
+            localStorage.setItem('cpl_reg_status', currentStatus === 'closed' ? 'open' : 'closed');
+            checkRegistrationStatus();
+        }
+
+        // TAB SWITCHING WITH PASSWORD PROTECTION FOR CAPTAINS' VIEW
+        window.switchTab = function(tabName) {
+            if(tabName === 'captain-view' && !isCaptainAuthenticated) {
+                showPasswordModal("Captain Access", "Enter Captain Password to Access Live Screen:", "CURAJ_CAPTAIN", () => {
+                    isCaptainAuthenticated = true;
+                    alert('Access Granted! Welcome Captain.');
+                    executeTabSwitch(tabName);
+                });
+                return;
+            }
+            executeTabSwitch(tabName);
+        }
+
+        function executeTabSwitch(tabName) {
+            ['registration', 'public-auction', 'team-summary', 'captain-view'].forEach(t => {
+                const el = document.getElementById(`section-${t}`);
+                const tabEl = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+                if(tabEl) {
+                    tabEl.classList.remove('border-emerald-500', 'text-emerald-400');
+                    tabEl.classList.add('border-transparent', 'text-slate-400');
+                }
+            });
+            const targetSec = document.getElementById(`section-${tabName}`);
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if(targetSec) targetSec.classList.remove('hidden');
+            if(targetTab) {
+                targetTab.classList.add('border-emerald-500', 'text-emerald-400');
+                targetTab.classList.remove('border-transparent', 'text-slate-400');
+            }
+            if(tabName === 'public-auction') loadPublicAuction();
+            if(tabName === 'team-summary') loadTeamSummary();
+        }
+
+        // MASKED PASSWORD MODAL FUNCTIONS
+        window.showAdminPasswordModal = function() {
+            showPasswordModal("Admin Login", "Enter Admin Password:", "ADMIN_AYUSH6200", () => {
+                const adminSec = document.getElementById('adminSection');
+                const btnContainer = document.getElementById('adminAccessBtnContainer');
+                if(adminSec) adminSec.classList.remove('hidden');
+                if(btnContainer) btnContainer.classList.add('hidden');
+                window.scrollTo({top: adminSec.offsetTop, behavior: 'smooth'});
+                checkRegistrationStatus();
+                loadPlayers();
+            });
+        }
+
+        function showPasswordModal(title, desc, correctPass, callback) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalPasswordInput').value = '';
+            document.getElementById('passwordModal').classList.remove('hidden');
+            document.getElementById('modalPasswordInput').focus();
+            currentAuthCallback = { correctPass, callback };
+        }
+
+        window.closePasswordModal = function() {
+            document.getElementById('passwordModal').classList.add('hidden');
+            currentAuthCallback = null;
+        }
+
+        window.verifyPassword = function() {
+            const inputEl = document.getElementById('modalPasswordInput');
+            const enteredVal = inputEl ? inputEl.value.trim() : '';
+            
+            if(currentAuthCallback && enteredVal === currentAuthCallback.correctPass) {
+                const cb = currentAuthCallback.callback;
+                closePasswordModal();
+                cb();
+            } else {
+                alert('Incorrect Password! Please try again.');
+                if(inputEl) {
+                    inputEl.value = '';
+                    inputEl.focus();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const passInput = document.getElementById('modalPasswordInput');
+            if(passInput) {
+                passInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        verifyPassword();
+                    }
+                });
+            }
+        });
+
+        // PREVIEW FILE & REALTIME FORM PREVIEW UPDATE
+        window.previewFile = function(event, previewId, iconId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if(previewId === 'photoPreview') {
+                        studentPhotoData = e.target.result;
+                        document.getElementById('prevCardPhotoImg').src = e.target.result;
+                        document.getElementById('prevCardPhotoImg').classList.remove('hidden');
+                        document.getElementById('prevCardPhotoIcon').classList.add('hidden');
+                    }
+                    document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(previewId).classList.remove('hidden');
+                    document.getElementById(iconId).classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.updatePreview = function() {
+            const name = document.getElementById('fullName').value.trim();
+            const id = document.getElementById('studentId').value.trim();
+            const dept = document.getElementById('department').value.trim();
+            const role = document.getElementById('cricketRole').value;
+            const batting = document.getElementById('battingStyle').value;
+            const bowling = document.getElementById('bowlingStyle').value;
+            const hostel = document.getElementById('hostel').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+
+            document.getElementById('prevCardName').innerText = name || "Not Submitted Yet";
+            document.getElementById('prevCardId').innerText = id || "Enrollment ID";
+            document.getElementById('prevCardDept').innerText = dept || "-";
+            document.getElementById('prevCardRole').innerText = role || "-";
+            document.getElementById('prevCardBatting').innerText = batting || "-";
+            document.getElementById('prevCardBowling').innerText = bowling || "-";
+            document.getElementById('prevCardHostel').innerText = hostel || "-";
+            document.getElementById('prevCardMobile').innerText = mobile || "-";
+        }
+
+        // HANDLE REGISTRATION WITH STRICT 10-DIGIT & DUPLICATE VALIDATION
+        window.handleRegistration = async function(e) {
             e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPassword').value;
-
-            auth.signInWithEmailAndPassword(email, pass)
-                .then(() => {
-                    currentUserRole = 'admin';
-                    closeAdminModal();
-                    document.getElementById('adminQuickControls').classList.remove('hidden');
-                    document.getElementById('adminAuctionControls').classList.remove('hidden');
-                    document.getElementById('authNavContainer').innerHTML = `<span class="bg-green-600/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold">Admin Connected</span>`;
-                    alert("Admin login successful!");
-                })
-                .catch(err => alert("Login Failed: " + err.message));
-        }
-
-        // Player Registration with Validation & Duplicate Check
-        async function handlePlayerRegistration(e) {
-            e.preventDefault();
-            const name = document.getElementById('regName').value;
-            const enrol = document.getElementById('regEnrol').value;
-            const phone = document.getElementById('regPhone').value;
-            const role = document.getElementById('regRole').value;
-            const battingStyle = document.getElementById('regBattingStyle').value;
-            const bowlingStyle = document.getElementById('regBowlingStyle').value;
-            const photoFile = document.getElementById('regPhoto').files[0];
-
-            // 10-Digit WhatsApp Validation
-            const phoneRegex = /^\d{10}$/;
-            if (!phoneRegex.test(phone)) {
-                alert("Please enter your valid WhatsApp number.");
+            if(localStorage.getItem('cpl_reg_status') === 'closed') {
+                alert('Sorry, registrations are currently closed!');
                 return;
             }
 
-            // Duplicate Enrollment / Phone check
-            const isDuplicate = registeredPlayers.some(p => p.enrol === enrol || p.phone === phone);
-            if (isDuplicate) {
-                alert("Error: A player with this Enrollment ID or WhatsApp number is already registered!");
+            const mobileInput = document.getElementById('mobile').value.trim();
+            const studentIdInput = document.getElementById('studentId').value.trim();
+
+            // Strict 10-digit WhatsApp Validation
+            if(!/^\d{10}$/.test(mobileInput)) {
+                alert('Please enter a valid 10-digit WhatsApp number!');
+                document.getElementById('mobile').focus();
                 return;
             }
 
-            try {
-                // Upload Photo to Firebase Storage
-                const storageRef = storage.ref(`player_photos/${Date.now()}_${photoFile.name}`);
-                const snapshot = await storageRef.put(photoFile);
-                const photoUrl = await snapshot.ref.getDownloadURL();
-
-                // Save Player to Firestore
-                await db.collection("players").add({
-                    name, enrol, phone, role, battingStyle, bowlingStyle,
-                    photoUrl, status: 'unsold', team: null, soldPrice: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert("Player registered successfully!");
-                document.getElementById('playerRegistrationForm').reset();
-                switchTab('auction');
-            } catch (err) {
-                alert("Registration failed: " + err.message);
-            }
-        }
-
-        // Team Creation with Logo & Captain Details
-        async function handleTeamCreation(e) {
-            e.preventDefault();
-            const teamName = document.getElementById('teamNameInput').value;
-            const captainName = document.getElementById('captainNameInput').value;
-            const captainPhone = document.getElementById('captainPhoneInput').value;
-            const logoFile = document.getElementById('teamLogoInput').files[0];
-
-            if (!/^\d{10}$/.test(captainPhone)) {
-                alert("Please enter a valid 10-digit WhatsApp number for the captain.");
-                return;
-            }
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "Submitting to Database...";
+            submitBtn.disabled = true;
 
             try {
-                const storageRef = storage.ref(`team_logos/${Date.now()}_${logoFile.name}`);
-                const snapshot = await storageRef.put(logoFile);
-                const logoUrl = await snapshot.ref.getDownloadURL();
+                // Check for duplicate student ID or mobile number
+                const qId = query(collection(db, "registrations"), where("studentId", "==", studentIdInput));
+                const qMob = query(collection(db, "registrations"), where("mobile", "==", mobileInput));
+                const [snapId, snapMob] = await Promise.all([getDocs(qId), getDocs(qMob)]);
 
-                await db.collection("teams").add({
-                    teamName, captainName, captainPhone, logoUrl,
-                    purse: 1000000000, // ₹100 Cr in absolute value or custom representation
-                    squad: []
-                });
+                if(!snapId.empty) {
+                    alert('Error: This Student ID / Enrollment No is already registered!');
+                    submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
+                    submitBtn.disabled = false;
+                    lucide.createIcons();
+                    return;
+                }
+                if(!snapMob.empty) {
+                    alert('Error: This WhatsApp number is already registered!');
+                    submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
+                    submitBtn.disabled = false;
+                    lucide.createIcons();
+                    return;
+                }
 
-                alert("Team created successfully!");
-                closeTeamModal();
-                document.getElementById('teamModal').reset();
-            } catch (err) {
-                alert("Team creation failed: " + err.message);
+                const batting = document.getElementById('battingStyle').value;
+                const bowling = document.getElementById('bowlingStyle').value;
+                const combinedStyle = `${batting} / ${bowling}`;
+
+                const playerData = {
+                    photo: studentPhotoData || '',
+                    fullName: document.getElementById('fullName').value.trim(),
+                    studentId: studentIdInput,
+                    department: document.getElementById('department').value.trim(),
+                    mobile: mobileInput,
+                    hostel: document.getElementById('hostel').value.trim(),
+                    role: document.getElementById('cricketRole').value,
+                    style: combinedStyle,
+                    auctionStatus: 'Pending',
+                    soldTeam: '-',
+                    bidPrice: '0',
+                    createdAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "registrations"), playerData);
+                alert('Registration completed & saved to Firebase successfully!');
+                document.getElementById('registrationForm').reset();
+                
+                studentPhotoData = '';
+                document.getElementById('photoPreview').classList.add('hidden');
+                document.getElementById('photoIcon').classList.remove('hidden');
+                document.getElementById('prevCardPhotoImg').classList.add('hidden');
+                document.getElementById('prevCardPhotoIcon').classList.remove('hidden');
+                updatePreview();
+
+                loadPlayers();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Error saving registration.");
+            } finally {
+                submitBtn.innerHTML = `<i data-lucide="check-circle"></i> Submit Registration`;
+                submitBtn.disabled = false;
+                lucide.createIcons();
             }
         }
 
-        // Render Auction Queue & Filters
-        function renderAuctionQueue() {
-            const container = document.getElementById('auctionQueueList');
-            container.innerHTML = '';
-            const searchVal = document.getElementById('auctionSearchInput').value.toLowerCase();
-            const styleFilter = document.getElementById('auctionStyleFilter').value;
-
-            const unsold = registeredPlayers.filter(p => p.status === 'unsold');
-            const filtered = unsold.filter(p => {
-                const matchSearch = p.name.toLowerCase().includes(searchVal) || p.enrol.toLowerCase().includes(searchVal);
-                const matchStyle = !styleFilter || p.battingStyle === styleFilter || p.bowlingStyle === styleFilter;
-                return matchSearch && matchStyle;
-            });
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 col-span-full text-center py-4">No players available in queue.</p>`;
-                return;
-            }
-
-            filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = `bg-slate-900/60 p-3 rounded-lg border border-slate-700/80 flex items-center space-x-3 cursor-pointer hover:border-green-500 transition`;
-                card.onclick = () => selectActivePlayer(p);
-                card.innerHTML = `
-                    <img src="${p.photoUrl}" class="w-12 h-12 rounded-lg object-cover border border-slate-700">
-                    <div class="flex-grow overflow-hidden">
-                        <h4 class="text-sm font-bold truncate">${p.name}</h4>
-                        <p class="text-xs text-slate-400">${p.role} • <span class="text-green-400">${p.battingStyle}</span></p>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+        window.hideAdmin = function() {
+            const adminSec = document.getElementById('adminSection');
+            const btnContainer = document.getElementById('adminAccessBtnContainer');
+            if(adminSec) adminSec.classList.add('hidden');
+            if(btnContainer) btnContainer.classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function filterAuctionPlayers() { renderAuctionQueue(); }
-
-        function selectActivePlayer(player) {
-            currentActivePlayer = player;
-            document.getElementById('currentAuctionPlayerName').innerText = player.name;
-            document.getElementById('activePlayerPhoto').src = player.photoUrl;
-            document.getElementById('tagRole').innerText = `Role: ${player.role}`;
-            document.getElementById('tagBatting').innerText = `Batting: ${player.battingStyle}`;
-            document.getElementById('tagBowling').innerText = `Bowling: ${player.bowlingStyle}`;
-            document.getElementById('activePlayerEnrol').innerText = player.enrol;
-        }
-
-        // Mark Player Sold with Purse Deduction & Sound Trigger
-        async function markPlayerSold() {
-            if (!currentActivePlayer) return alert("Select a player first!");
-            const teamId = document.getElementById('soldTeamSelect').value;
-            const amount = parseFloat(document.getElementById('soldAmountInput').value);
-
-            if (!teamId || !amount || isNaN(amount)) return alert("Select a valid team and enter sold price!");
-
-            const team = teamsList.find(t => t.id === teamId);
-            if (!team) return alert("Team not found!");
-
-            // Save state for Undo
-            lastActionState = { type: 'sold', playerId: currentActivePlayer.id, teamId, amount };
+        // LOAD PLAYERS FOR ADMIN TABLE & CATEGORY BREAKDOWN
+        window.loadPlayers = async function() {
+            const tbody = document.getElementById('playerTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading registrations...</td></tr>`;
 
             try {
-                // Update player status
-                await db.collection("players").doc(currentActivePlayer.id).update({
-                    status: 'sold', team: team.teamName, soldPrice: amount
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                allPlayersCache = [];
+                querySnapshot.forEach((docSnap) => {
+                    allPlayersCache.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                
+                let bCount = 0, bowlCount = 0, arCount = 0, wkCount = 0;
+                allPlayersCache.forEach(p => {
+                    if(p.role === 'Batsman') bCount++;
+                    else if(p.role === 'Bowler') bowlCount++;
+                    else if(p.role === 'All-Rounder') arCount++;
+                    else if(p.role === 'Wicket Keeper Batsman') wkCount++;
                 });
 
-                // Deduct Purse
-                const newPurse = team.purse - amount;
-                await db.collection("teams").doc(teamId).update({ purse: newPurse });
+                document.getElementById('countBatsman').innerText = bCount;
+                document.getElementById('countBowler').innerText = bowlCount;
+                document.getElementById('countAllRounder').innerText = arCount;
+                document.getElementById('countWk').innerText = wkCount;
 
-                // Add to History
-                await db.collection("history").add({
-                    playerName: currentActivePlayer.name, teamName: team.teamName, soldPrice: amount, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                // Play Sound
-                document.getElementById('soldSound').play();
-                alert(`${currentActivePlayer.name} sold to ${team.teamName} for ₹${amount}!`);
-                currentActivePlayer = null;
-                resetActiveDisplay();
+                renderAdminTable(allPlayersCache);
             } catch (err) {
-                alert("Error updating auction: " + err.message);
+                console.error("Error loading players:", err);
             }
         }
 
-        async function markPlayerUnsold() {
-            if (!currentActivePlayer) return alert("Select a player first!");
-            lastActionState = { type: 'unsold', playerId: currentActivePlayer.id };
+        // FILTER & SEARCH ADMIN TABLE
+        window.filterAdminPlayers = function() {
+            const queryVal = document.getElementById('adminSearchInput').value.toLowerCase();
+            const selectedRole = document.getElementById('adminRoleFilter').value;
 
-            try {
-                await db.collection("players").doc(currentActivePlayer.id).update({ status: 'unsold' });
-                document.getElementById('unsoldSound').play();
-                alert(`${currentActivePlayer.name} marked as Unsold.`);
-                currentActivePlayer = null;
-                resetActiveDisplay();
-            } catch (err) {
-                alert("Error: " + err.message);
-            }
-        }
-
-        function undoLastAction() {
-            if (!lastActionState) return alert("No recent action to undo!");
-            // Reversal logic can be implemented here based on lastActionState
-            alert("Undo action processed.");
-            lastActionState = null;
-        }
-
-        function resetActiveDisplay() {
-            document.getElementById('currentAuctionPlayerName').innerText = "Select Player to Auction";
-            document.getElementById('activePlayerPhoto').src = "https://via.placeholder.com/150";
-            document.getElementById('tagRole').innerText = "Role: -";
-            document.getElementById('tagBatting').innerText = "Batting: -";
-            document.getElementById('tagBowling').innerText = "Bowling: -";
-            document.getElementById('activePlayerEnrol').innerText = "-";
-            document.getElementById('soldAmountInput').value = "";
-        }
-
-        // Render Teams Squads
-        function renderTeamsSquads() {
-            const container = document.getElementById('teamsSquadsContainer');
-            container.innerHTML = '';
-            teamsList.forEach(t => {
-                const teamPlayers = registeredPlayers.filter(p => p.team === t.teamName);
-                const card = document.createElement('div');
-                card.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm space-y-3';
-                card.innerHTML = `
-                    <div class="flex items-center space-x-3 border-b border-slate-700 pb-3">
-                        <img src="${t.logoUrl}" class="w-12 h-12 rounded-lg object-cover border border-slate-700">
-                        <div>
-                            <h3 class="font-bold">${t.teamName}</h3>
-                            <p class="text-xs text-slate-400">Captain: ${t.captainName} (${t.captainPhone})</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between text-xs font-semibold">
-                        <span>Remaining Purse: <strong class="text-green-400">₹ ${(t.purse / 10000000).toFixed(2)} Cr</strong></span>
-                        <span>Players: ${teamPlayers.length}</span>
-                    </div>
-                    <div class="space-y-1 max-h-36 overflow-y-auto">
-                        ${teamPlayers.map(p => `<div class="text-xs bg-slate-900/50 p-2 rounded flex justify-between"><span>${p.name}</span><span class="text-green-400">₹ ${p.soldPrice}</span></div>`).join('')}
-                    </div>
-                `;
-                container.appendChild(card);
+            const filtered = allPlayersCache.filter(p => {
+                const matchName = p.fullName.toLowerCase().includes(queryVal) || p.studentId.toLowerCase().includes(queryVal);
+                const matchRole = selectedRole === 'All' || p.role === selectedRole;
+                return matchName && matchRole;
             });
+            renderAdminTable(filtered);
         }
 
-        function updateTeamDropdowns() {
-            const select = document.getElementById('soldTeamSelect');
-            select.innerHTML = '<option value="">Select Team for Sale</option>';
-            teamsList.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.id;
-                opt.innerText = t.teamName;
-                select.appendChild(opt);
-            });
-        }
-
-        function updateStats() {
-            document.getElementById('statTotalPlayers').innerText = registeredPlayers.length;
-            document.getElementById('statSoldPlayers').innerText = registeredPlayers.filter(p => p.status === 'sold').length;
-        }
-
-        function renderAuctionHistory() {
-            const tbody = document.getElementById('auctionHistoryTableBody');
+        function renderAdminTable(players) {
+            const tbody = document.getElementById('playerTableBody');
+            if(!tbody) return;
             tbody.innerHTML = '';
-            auctionHistory.forEach(h => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-slate-700/50';
-                row.innerHTML = `
-                    <td class="p-3 font-medium">${h.playerName}</td>
-                    <td class="p-3">${h.teamName}</td>
-                    <td class="p-3 text-green-400 font-semibold">₹ ${h.soldPrice}</td>
-                    <td class="p-3 text-xs text-slate-400">${h.timestamp ? new Date(h.timestamp.toDate()).toLocaleTimeString() : 'Just now'}</td>
-                `;
-                tbody.appendChild(row);
+            let total = allPlayersCache.length, sold = 0, unsold = 0;
+
+            allPlayersCache.forEach(p => {
+                if(p.auctionStatus === 'Sold') sold++;
+                if(p.auctionStatus === 'Unsold') unsold++;
             });
+
+            if(players.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">No matching players found.</td></tr>`;
+                return;
+            }
+
+            players.forEach((p) => {
+                const numericPrice = parseFloat(p.bidPrice) || 0;
+                const formattedPrice = formatCurrency(numericPrice);
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800 hover:bg-slate-900/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3"><img src="${p.photo || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded-lg object-cover border border-slate-700"></td>
+                    <td class="p-3"><strong>${p.fullName}</strong><br><span class="text-xs text-emerald-400">${p.studentId}</span></td>
+                    <td class="p-3">${p.department}<br><span class="text-xs text-slate-400">${p.hostel}</span></td>
+                    <td class="p-3"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs">${p.role}</span></td>
+                    <td class="p-3">
+                        <span class="px-2 py-1 rounded text-xs font-semibold ${p.auctionStatus === 'Sold' ? 'bg-emerald-500/20 text-emerald-400' : p.auctionStatus === 'Unsold' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">
+                            ${p.auctionStatus} ${p.auctionStatus === 'Sold' ? '('+formattedPrice+')' : ''}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center flex items-center justify-center gap-2">
+                        <button onclick="broadcastPlayer('${p.id}', '${btoa(JSON.stringify(p))}')" class="bg-sky-600/80 hover:bg-sky-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer flex items-center gap-1" title="Broadcast">
+                            📢 Broadcast
+                        </button>
+                        <button onclick="openModal('${p.id}', '${p.fullName}', '${p.auctionStatus}', '${p.soldTeam || ''}', '${p.bidPrice || ''}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                            Edit
+                        </button>
+                        <button onclick="deletePlayer('${p.id}')" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statSold').innerText = sold;
+            document.getElementById('statUnsold').innerText = unsold;
+            lucide.createIcons();
         }
 
-        // Trigger Auction Close & Automated WhatsApp Alerts simulation
-        function triggerAuctionClose() {
-            if (confirm("Are you sure you want to close the auction and dispatch WhatsApp notifications?")) {
-                alert("Auction Closed successfully! Automated WhatsApp notifications triggered for all sold and unsold players.");
+        // HELPER TO FORMAT CURRENCY
+        function formatCurrency(val) {
+            if(!val || val <= 0) return '₹0';
+            const crores = Math.floor(val);
+            const lakhs = Math.round((val - crores) * 100);
+
+            if(crores > 0 && lakhs > 0) {
+                return `₹${crores} Cr ${lakhs} Lakh`;
+            } else if(crores > 0) {
+                return `₹${crores} Cr`;
+            } else {
+                return `₹${lakhs} Lakh`;
             }
         }
 
-        // Export Reports to Excel
-        function exportToExcel() {
-            const worksheet = XLSX.utils.json_to_sheet(registeredPlayers);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Registered Players");
-            XLSX.writeFile(workbook, "CPL_Registered_Players.xlsx");
+        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS
+        window.broadcastPlayer = async function(id, encodedPlayer) {
+            try {
+                const player = JSON.parse(atob(encodedPlayer));
+                await setDoc(doc(db, "liveAuction", "current"), {
+                    id: id,
+                    fullName: player.fullName,
+                    department: player.department,
+                    role: player.role,
+                    style: player.style,
+                    photo: player.photo,
+                    auctionStatus: player.auctionStatus || 'Pending',
+                    updatedAt: new Date().toISOString()
+                });
+                alert(`📢 ${player.fullName} has been broadcasted to all Captains' screens successfully!`);
+            } catch (err) {
+                console.error("Broadcast error:", err);
+                alert("Failed to broadcast player.");
+            }
         }
 
-        // Export Squads to PDF
-        function exportSquadsPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("CPL Team Squads Report", 14, 16);
-            let y = 26;
-            teamsList.forEach(t => {
-                doc.text(`Team: ${t.teamName} | Captain: ${t.captainName}`, 14, y);
-                y += 8;
+        // REAL-TIME LISTENER FOR CAPTAINS' SCREEN (`onSnapshot`)
+        function listenToLiveBroadcast() {
+            onSnapshot(doc(db, "liveAuction", "current"), (docSnap) => {
+                if (docSnap.exists()) {
+                    const player = docSnap.data();
+                    const photoEl = document.getElementById('captainPlayerPhoto');
+                    const placeholderEl = document.getElementById('captainPhotoPlaceholder');
+                    
+                    if(player.photo && photoEl && placeholderEl) {
+                        photoEl.src = player.photo;
+                        photoEl.classList.remove('hidden');
+                        placeholderEl.classList.add('hidden');
+                    }
+
+                    const nameEl = document.getElementById('captainPlayerName');
+                    const metaEl = document.getElementById('captainPlayerMeta');
+                    const styleEl = document.getElementById('captainPlayerStyle');
+                    const statusEl = document.getElementById('captainPlayerStatus');
+
+                    if(nameEl) nameEl.innerText = player.fullName || "Unknown Player";
+                    if(metaEl) metaEl.innerText = `${player.department || ''} • ${player.role || ''}`;
+                    if(styleEl) styleEl.innerText = player.style || '-';
+                    if(statusEl) statusEl.innerText = player.auctionStatus || 'Pending';
+                }
             });
-            doc.save("CPL_Team_Squads.pdf");
+        }
+
+        // PUBLIC AUCTION HUB
+        window.loadPublicAuction = async function() {
+            const grid = document.getElementById('publicAuctionGrid');
+            if(!grid) return;
+            grid.innerHTML = `<p class="text-slate-400 col-span-3 text-center py-6">Loading auction records...</p>`;
+            try {
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                grid.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    if(p.auctionStatus !== 'Pending') {
+                        const numericPrice = parseFloat(p.bidPrice) || 0;
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-md";
+                        card.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <img src="${p.photo || 'https://via.placeholder.com/60'}" class="w-14 h-14 rounded-xl object-cover border border-emerald-500/40">
+                                <div>
+                                    <h4 class="font-bold text-white text-base">${p.fullName}</h4>
+                                    <p class="text-xs text-emerald-400">${p.department}</p>
+                                </div>
+                            </div>
+                            <div class="text-xs space-y-1 text-slate-300 border-t border-slate-800 pt-2">
+                                <div class="flex justify-between"><span>Role:</span> <strong class="text-white">${p.role}</strong></div>
+                                <div class="flex justify-between"><span>Status:</span> <strong class="${p.auctionStatus === 'Sold' ? 'text-emerald-400' : 'text-amber-400'}">${p.auctionStatus}</strong></div>
+                                <div class="flex justify-between"><span>Team:</span> <strong class="text-white">${p.soldTeam || '-'}</strong></div>
+                                <div class="flex justify-between"><span>Bid Price:</span> <strong class="text-emerald-300">${formatCurrency(numericPrice)}</strong></div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    }
+                });
+                if(grid.innerHTML === '') {
+                    grid.innerHTML = `<p class="text-slate-500 col-span-3 text-center py-6">No players have been auctioned yet.</p>`;
+                }
+            } catch (err) {
+                console.error("Error loading public auction:", err);
+            }
+        }
+
+        // DYNAMIC TEAM SQUAD & PURSE SUMMARY VIEW (£100 Cr Start)
+        window.loadTeamSummary = async function() {
+            const container = document.getElementById('teamSummaryContainer');
+            if(!container) return;
+            container.innerHTML = `<p class="text-slate-400 col-span-2 text-center py-6">Calculating team squads and budgets...</p>`;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "registrations"));
+                const teamsMap = {};
+
+                querySnapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    if(p.auctionStatus === 'Sold' && p.soldTeam && p.soldTeam.trim() !== '-' && p.soldTeam.trim() !== '') {
+                        const teamName = p.soldTeam.trim();
+                        if(!teamsMap[teamName]) {
+                            teamsMap[teamName] = {
+                                players: [],
+                                totalSpentNumeric: 0
+                            };
+                        }
+                        const price = parseFloat(p.bidPrice) || 0;
+                        teamsMap[teamName].players.push({ name: p.fullName, role: p.role, priceNumeric: price, photo: p.photo });
+                        teamsMap[teamName].totalSpentNumeric += price;
+                    }
+                });
+
+                container.innerHTML = '';
+                const teamNames = Object.keys(teamsMap);
+
+                if(teamNames.length === 0) {
+                    container.innerHTML = `<p class="text-slate-500 col-span-2 text-center py-8">No teams have acquired players yet. Admin needs to mark players as 'Sold' with team names.</p>`;
+                    return;
+                }
+
+                teamNames.forEach(team => {
+                    const data = teamsMap[team];
+                    const remainingNumeric = Math.max(0, 100 - data.totalSpentNumeric);
+
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl";
+                    
+                    let playersHtml = '';
+                    data.players.forEach(pl => {
+                        playersHtml += `
+                            <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <img src="${pl.photo || 'https://via.placeholder.com/40'}" class="w-8 h-8 rounded-lg object-cover">
+                                    <div>
+                                        <strong class="text-white">${pl.name}</strong>
+                                        <span class="text-slate-400 block">${pl.role}</span>
+                                    </div>
+                                </div>
+                                <span class="text-emerald-400 font-bold">${formatCurrency(pl.priceNumeric)}</span>
+                            </div>
+                        `;
+                    });
+
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <h3 class="font-bold font-cricket text-xl text-white uppercase tracking-wider">${team}</h3>
+                            <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">Squad: ${data.players.length} Players</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+                            <div><span class="text-slate-400 block">Total Spent:</span> <strong class="text-amber-400">${formatCurrency(data.totalSpentNumeric)}</strong></div>
+                            <div><span class="text-slate-400 block">Remaining Purse:</span> <strong class="text-emerald-400">${formatCurrency(remainingNumeric)}</strong></div>
+                        </div>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            <p class="text-xs font-semibold uppercase text-slate-400 mb-1">Purchased Squad:</p>
+                            ${playersHtml}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Error loading team summary:", err);
+            }
+        }
+
+        // MODAL EDIT FUNCTIONS
+        window.openModal = function(id, name, status, team, priceStr) {
+            document.getElementById('modalPlayerId').value = id;
+            document.getElementById('modalStatus').value = status;
+            document.getElementById('modalTeam').value = team;
+            
+            const numericVal = parseFloat(priceStr) || 0;
+            const crores = Math.floor(numericVal);
+            const lakhs = Math.round((numericVal - crores) * 100);
+
+            document.getElementById('modalCrores').value = crores > 0 ? crores : '';
+            document.getElementById('modalLakhs').value = lakhs > 0 ? lakhs : '';
+
+            document.getElementById('modalPlayerInfo').innerHTML = `<strong class="text-white text-sm">${name}</strong>`;
+            document.getElementById('auctionModal').classList.remove('hidden');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('auctionModal').classList.add('hidden');
+        }
+
+        window.saveModalAuction = async function() {
+            const id = document.getElementById('modalPlayerId').value;
+            const status = document.getElementById('modalStatus').value;
+            const team = document.getElementById('modalTeam').value.trim() || '-';
+            
+            const croresInput = parseFloat(document.getElementById('modalCrores').value) || 0;
+            const lakhsInput = parseFloat(document.getElementById('modalLakhs').value) || 0;
+
+            const finalPriceDecimal = croresInput + (lakhsInput / 100);
+
+            try {
+                await updateDoc(doc(db, "registrations", id), {
+                    auctionStatus: status,
+                    soldTeam: team,
+                    bidPrice: finalPriceDecimal.toString()
+                });
+                closeModal();
+                loadPlayers();
+                alert('Auction details updated successfully!');
+            } catch (err) {
+                console.error("Error updating:", err);
+                alert("Failed to update.");
+            }
+        }
+
+        window.deletePlayer = async function(id) {
+            if(confirm("Are you sure you want to permanently delete this player from Firebase?")) {
+                try {
+                    await deleteDoc(doc(db, "registrations", id));
+                    loadPlayers();
+                    alert('Player deleted successfully.');
+                } catch (err) {
+                    console.error("Delete error:", err);
+                }
+            }
         }
     </script>
 </body>
