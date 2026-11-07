@@ -589,9 +589,12 @@
             } catch(e) { alert("Failed to toggle registration status."); }
         }
 
+        let activeLoginRole = ''; // यह ट्रैक करेगा कि कौन सा लॉगिन खुला है
+
         // TAB SWITCHING WITH FIREBASE AUTH DUAL POPUP FOR CAPTAIN
         window.switchTab = function(tabName) {
             if(tabName === 'captain-view' && !window.isCaptainAuthenticated) {
+                activeLoginRole = 'captain'; // पक्का कर दिया कि यह कैप्टन लॉगिन है
                 showPasswordModal("Captain Login", "Enter Captain Email and Password to Access Live Screen:", () => {
                     window.isCaptainAuthenticated = true;
                     alert('Access Granted! Welcome Captain.');
@@ -626,6 +629,7 @@
 
         // ADMIN LOGIN MODAL WITH FIREBASE AUTH DUAL POPUP
         window.showAdminPasswordModal = function() {
+            activeLoginRole = 'admin'; // पक्का कर दिया कि यह एडमिन लॉगिन है
             showPasswordModal("Admin Login", "Enter Admin Email and Password:", () => {
                 const adminSec = document.getElementById('adminSection');
                 const btnContainer = document.getElementById('adminAccessBtnContainer');
@@ -653,7 +657,7 @@
             currentAuthCallback = null;
         }
 
-        // SECURE FIREBASE AUTHENTICATION VERIFICATION (EMAIL + PASSWORD)
+        // SECURE FIREBASE AUTHENTICATION VERIFICATION WITH STRICT ROLE CHECK
         window.verifyPassword = async function() {
             const emailInput = document.getElementById('modalEmailInput');
             const passInput = document.getElementById('modalPasswordInput');
@@ -666,16 +670,15 @@
                 return;
             }
 
-            const modalTitleText = document.getElementById('modalTitle').innerText.toLowerCase();
-            const isAdminModal = modalTitleText.includes('admin');
-
-            if(isAdminModal && enteredEmail !== 'mrayushgupta3@gmail.com') {
+            // अगर एडमिन लॉगिन खुला है और एडमिन का ईमेल नहीं डाला, तो रोक दो
+            if(activeLoginRole === 'admin' && enteredEmail !== 'mrayushgupta3@gmail.com') {
                 alert('Access Denied! This login is restricted to Admin only.');
                 if(passInput) { passInput.value = ''; passInput.focus(); }
                 return;
             }
 
-            if(!isAdminModal && enteredEmail === 'mrayushgupta3@gmail.com') {
+            // अगर कैप्टन लॉगिन खुला है और एडमिन की आईडी डाली है, तो रोक दो
+            if(activeLoginRole === 'captain' && enteredEmail === 'mrayushgupta3@gmail.com') {
                 alert('Access Denied! Please use Captain credentials for Captain screen.');
                 if(passInput) { passInput.value = ''; passInput.focus(); }
                 return;
@@ -697,16 +700,6 @@
                 }
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const passInput = document.getElementById('modalPasswordInput');
-            if(passInput) {
-                passInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') verifyPassword();
-                });
-            }
-        });
-
         // PREVIEW FILE & REALTIME FORM PREVIEW UPDATE
         window.previewFile = function(event, previewId, iconId) {
             const file = event.target.files[0];
