@@ -31,7 +31,7 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏  CPL – The Ultimate Cricket Experience  🏏</p>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 Official CPL Portal — Live Player Registration, Auction Hub & Captains' Arena 🏏</p>
             </div>
         </header>
 
@@ -122,9 +122,25 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Playing Style *</label>
-                                <input type="text" id="playingStyle" required oninput="updatePreview()" placeholder="Right Hand Bat / Fast" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                            <!-- SEPARATED BATTING & BOWLING STYLE DROPDOWNS -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Batting Style *</label>
+                                    <select id="battingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                        <option value="Right-Handed Bat">Right-Handed Bat</option>
+                                        <option value="Left-Handed Bat">Left-Handed Bat</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bowling Style *</label>
+                                    <select id="bowlingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-lg px-4 py-2 text-white outline-none">
+                                        <option value="Right-Arm Fast">Right-Arm Fast</option>
+                                        <option value="Right-Arm Spin">Right-Arm Spin</option>
+                                        <option value="Left-Arm Fast">Left-Arm Fast</option>
+                                        <option value="Left-Arm Spin">Left-Arm Spin</option>
+                                        <option value="Non-Bowler">Non-Bowler</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition">
@@ -152,7 +168,8 @@
                             <div class="text-sm space-y-2 text-slate-300 border-t border-slate-800 pt-3">
                                 <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">Batsman</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Style:</strong> <span id="prevCardStyle" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Batting:</strong> <span id="prevCardBatting" class="text-white">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Bowling:</strong> <span id="prevCardBowling" class="text-white">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white">-</span></div>
                             </div>
@@ -543,7 +560,8 @@
             const id = document.getElementById('studentId').value.trim();
             const dept = document.getElementById('department').value.trim();
             const role = document.getElementById('cricketRole').value;
-            const style = document.getElementById('playingStyle').value.trim();
+            const batting = document.getElementById('battingStyle').value;
+            const bowling = document.getElementById('bowlingStyle').value;
             const hostel = document.getElementById('hostel').value.trim();
             const mobile = document.getElementById('mobile').value.trim();
 
@@ -551,7 +569,8 @@
             document.getElementById('prevCardId').innerText = id || "Enrollment ID";
             document.getElementById('prevCardDept').innerText = dept || "-";
             document.getElementById('prevCardRole').innerText = role || "-";
-            document.getElementById('prevCardStyle').innerText = style || "-";
+            document.getElementById('prevCardBatting').innerText = batting || "-";
+            document.getElementById('prevCardBowling').innerText = bowling || "-";
             document.getElementById('prevCardHostel').innerText = hostel || "-";
             document.getElementById('prevCardMobile').innerText = mobile || "-";
         }
@@ -567,6 +586,10 @@
             submitBtn.innerText = "Submitting to Database...";
             submitBtn.disabled = true;
 
+            const batting = document.getElementById('battingStyle').value;
+            const bowling = document.getElementById('bowlingStyle').value;
+            const combinedStyle = `${batting} / ${bowling}`;
+
             const playerData = {
                 photo: studentPhotoData || '',
                 fullName: document.getElementById('fullName').value,
@@ -575,7 +598,7 @@
                 mobile: document.getElementById('mobile').value,
                 hostel: document.getElementById('hostel').value,
                 role: document.getElementById('cricketRole').value,
-                style: document.getElementById('playingStyle').value,
+                style: combinedStyle,
                 auctionStatus: 'Pending',
                 soldTeam: '-',
                 bidPrice: '0',
@@ -711,7 +734,7 @@
             lucide.createIcons();
         }
 
-        // HELPER TO FORMAT CURRENCY (e.g. 1.2 -> "1 Cr 20 Lakh" or 0.8 -> "80 Lakh")
+        // HELPER TO FORMAT CURRENCY
         function formatCurrency(val) {
             if(!val || val <= 0) return '₹0';
             const crores = Math.floor(val);
@@ -726,7 +749,7 @@
             }
         }
 
-        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS VIA FIRESTORE
+        // 📢 BROADCAST PLAYER TO CAPTAINS' SCREENS
         window.broadcastPlayer = async function(id, encodedPlayer) {
             try {
                 const player = JSON.parse(atob(encodedPlayer));
@@ -814,7 +837,7 @@
             }
         }
 
-        // DYNAMIC TEAM SQUAD & PURSE SUMMARY VIEW (£100 Cr Start with Exact Formatted Amounts)
+        // DYNAMIC TEAM SQUAD & PURSE SUMMARY VIEW (£100 Cr Start)
         window.loadTeamSummary = async function() {
             const container = document.getElementById('teamSummaryContainer');
             if(!container) return;
@@ -892,7 +915,7 @@
             }
         }
 
-        // MODAL EDIT FUNCTIONS WITH FIXED CRORE & LAKH PARSING
+        // MODAL EDIT FUNCTIONS
         window.openModal = function(id, name, status, team, priceStr) {
             document.getElementById('modalPlayerId').value = id;
             document.getElementById('modalStatus').value = status;
@@ -921,7 +944,6 @@
             const croresInput = parseFloat(document.getElementById('modalCrores').value) || 0;
             const lakhsInput = parseFloat(document.getElementById('modalLakhs').value) || 0;
 
-            // Fixed calculation using correct variables
             const finalPriceDecimal = croresInput + (lakhsInput / 100);
 
             try {
