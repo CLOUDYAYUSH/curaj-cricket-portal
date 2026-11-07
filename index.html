@@ -54,11 +54,11 @@
                 <h1 class="text-4xl md:text-6xl font-bold font-cricket uppercase tracking-wide text-white drop-shadow-2xl">
                     Central University of Rajasthan
                 </h1>
-                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL —  Player Registration, Live Auction Hub & Captains' Arena 🏏</p>
+                <p class="text-emerald-300 text-lg md:text-xl font-semibold tracking-wide mt-2 drop-shadow-md">🏏 CPL — Player Registration, Live Auction Hub & Captains' Arena 🏏</p>
             </div>
         </header>
 
-        <!-- Navigation Tabs (Teams view removed from here, now inside Admin) -->
+        <!-- Navigation Tabs -->
         <nav class="max-w-6xl mx-auto px-4 mt-6">
             <div class="flex border-b border-slate-800 dark:border-slate-800 border-slate-200 gap-4 overflow-x-auto justify-center">
                 <button onclick="switchTab('registration')" id="tab-registration" class="py-3 px-6 text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 cursor-pointer transition">
@@ -155,8 +155,10 @@
                                     <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-400 text-slate-600 mb-1">Bowling Style *</label>
                                     <select id="bowlingStyle" required onchange="updatePreview()" class="w-full bg-slate-900 dark:bg-slate-900 bg-white border border-slate-700 dark:border-slate-700 border-slate-300 focus:border-emerald-500 rounded-lg px-4 py-2 text-white dark:text-white text-slate-900 outline-none">
                                         <option value="None / Not Applicable">None / Not Applicable</option>
-                                        <option value="Pace">Pace</option>
-                                        <option value="Spin">Spin</option>
+                                        <option value="Right-Arm Fast / Fast Medium">Right-Arm Fast / Fast Medium</option>
+                                        <option value="Left-Arm Fast / Fast Medium">Left-Arm Fast / Fast Medium</option>
+                                        <option value="Right-Arm Spin">Right-Arm Spin</option>
+                                        <option value="Left-Arm Spin">Left-Arm Spin</option>
                                     </select>
                                 </div>
                             </div>
@@ -168,26 +170,26 @@
                     </div>
                 </div>
 
-                <!-- Registration Live Preview Card -->
+                <!-- Registration Live Preview Card (Enlarged) -->
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="glass-card rounded-2xl p-6 text-center border-t-4 border-emerald-500 shadow-2xl sticky top-6">
-                        <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase tracking-wider mb-4">Registration Live Preview</h3>
-                        <div id="livePreviewContainer" class="bg-slate-900/95 dark:bg-slate-900/95 bg-white rounded-2xl p-5 border border-slate-800 dark:border-slate-800 border-slate-200 text-left space-y-4 shadow-inner">
-                            <div class="flex items-center gap-4">
-                                <div id="prevCardPhotoBox" class="w-20 h-20 rounded-xl bg-slate-800 dark:bg-slate-800 bg-slate-200 flex items-center justify-center overflow-hidden shrink-0 border-2 border-emerald-500/40">
+                    <div class="glass-card rounded-2xl p-6 md:p-8 text-center border-t-4 border-emerald-500 shadow-2xl sticky top-6">
+                        <h3 class="text-2xl font-bold font-cricket text-emerald-400 uppercase tracking-wider mb-6">Registration Live Preview</h3>
+                        <div id="livePreviewContainer" class="bg-slate-900/95 dark:bg-slate-900/95 bg-white rounded-2xl p-6 border border-slate-800 dark:border-slate-800 border-slate-200 text-left space-y-5 shadow-inner">
+                            <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+                                <div id="prevCardPhotoBox" class="w-32 h-32 rounded-2xl bg-slate-800 dark:bg-slate-800 bg-slate-200 flex items-center justify-center overflow-hidden shrink-0 border-4 border-emerald-500/60 shadow-lg">
                                     <img id="prevCardPhotoImg" class="w-full h-full object-cover hidden" alt="Photo">
-                                    <i id="prevCardPhotoIcon" data-lucide="user" class="w-8 h-8 text-slate-500"></i>
+                                    <i id="prevCardPhotoIcon" data-lucide="user" class="w-14 h-14 text-slate-500"></i>
                                 </div>
-                                <div>
-                                    <h4 id="prevCardName" class="font-bold text-white dark:text-white text-slate-900 text-lg">Not Submitted Yet</h4>
-                                    <p id="prevCardId" class="text-xs text-emerald-400 font-medium">Enrollment ID</p>
+                                <div class="overflow-hidden">
+                                    <h4 id="prevCardName" class="font-bold text-white dark:text-white text-slate-900 text-2xl truncate">Not Submitted Yet</h4>
+                                    <p id="prevCardId" class="text-sm text-emerald-400 font-semibold mt-1">Enrollment ID</p>
                                 </div>
                             </div>
-                            <div class="text-sm space-y-2 text-slate-300 dark:text-slate-300 text-slate-700 border-t border-slate-800 dark:border-slate-800 border-slate-200 pt-3">
+                            <div class="text-sm space-y-3 text-slate-300 dark:text-slate-300 text-slate-700 border-t border-slate-800 dark:border-slate-800 border-slate-200 pt-4">
                                 <div class="flex justify-between"><strong class="text-slate-400">Department:</strong> <span id="prevCardDept" class="text-white dark:text-white text-slate-900">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold">Batsman</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Batting:</strong> <span id="prevCardBatting" class="text-white dark:text-white text-slate-900">-</span></div>
-                                <div class="flex justify-between"><strong class="text-slate-400">Bowling:</strong> <span id="prevCardBowling" class="text-white dark:text-white text-slate-900">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Role:</strong> <span id="prevCardRole" class="text-emerald-300 font-semibold text-base">Batsman</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Batting Style:</strong> <span id="prevCardBatting" class="text-white dark:text-white text-slate-900">-</span></div>
+                                <div class="flex justify-between"><strong class="text-slate-400">Bowling Style:</strong> <span id="prevCardBowling" class="text-white dark:text-white text-slate-900">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">Hostel & Room:</strong> <span id="prevCardHostel" class="text-white dark:text-white text-slate-900">-</span></div>
                                 <div class="flex justify-between"><strong class="text-slate-400">WhatsApp:</strong> <span id="prevCardMobile" class="text-white dark:text-white text-slate-900">-</span></div>
                             </div>
@@ -211,29 +213,29 @@
                 </div>
             </div>
 
-            <!-- TAB 3: CAPTAINS' LIVE BROADCAST SCREEN (Starts Blank until Admin Broadcasts) -->
+            <!-- TAB 3: CAPTAINS' LIVE BROADCAST SCREEN (ENLARGED & FULL SCREEN STYLE) -->
             <div id="section-captain-view" class="hidden space-y-6">
-                <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-sky-500/40 text-center max-w-3xl mx-auto">
-                    <div class="inline-block bg-sky-500/20 text-sky-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border border-sky-500/30 animate-pulse">
+                <div class="glass-card rounded-3xl p-6 md:p-12 shadow-2xl border-2 border-sky-500/40 text-center max-w-4xl mx-auto">
+                    <div class="inline-block bg-sky-500/20 text-sky-400 px-5 py-2 rounded-full text-sm font-bold uppercase tracking-wider mb-8 border border-sky-500/30 animate-pulse">
                         🔴 Live Auction Broadcast (Captains' Screen)
                     </div>
 
-                    <div id="captainLiveDisplay" class="space-y-6">
-                        <div class="w-40 h-40 md:w-52 md:h-52 mx-auto rounded-2xl bg-slate-900 dark:bg-slate-900 bg-slate-100 border-4 border-emerald-500/60 shadow-2xl overflow-hidden flex items-center justify-center">
+                    <div id="captainLiveDisplay" class="space-y-8">
+                        <div class="w-56 h-56 md:w-72 md:h-72 mx-auto rounded-3xl bg-slate-900 dark:bg-slate-900 bg-slate-100 border-4 border-emerald-500/80 shadow-2xl overflow-hidden flex items-center justify-center">
                             <img id="captainPlayerPhoto" src="" alt="Player Photo" class="w-full h-full object-cover hidden">
-                            <i id="captainPhotoPlaceholder" data-lucide="user" class="w-16 h-16 text-slate-600"></i>
+                            <i id="captainPhotoPlaceholder" data-lucide="user" class="w-24 h-24 text-slate-600"></i>
                         </div>
 
-                        <div class="space-y-2">
-                            <h2 id="captainPlayerName" class="text-3xl md:text-5xl font-extrabold font-cricket uppercase text-white dark:text-white text-slate-900 tracking-wide">Waiting for Admin to Broadcast...</h2>
-                            <p id="captainPlayerMeta" class="text-emerald-400 font-semibold text-lg">Department & Role will appear here instantly</p>
+                        <div class="space-y-3">
+                            <h2 id="captainPlayerName" class="text-4xl md:text-6xl font-extrabold font-cricket uppercase text-white dark:text-white text-slate-900 tracking-wide">Waiting for Admin to Broadcast...</h2>
+                            <p id="captainPlayerMeta" class="text-emerald-400 font-semibold text-xl">Department & Role will appear here instantly</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 dark:bg-slate-900/80 bg-slate-100 p-4 rounded-2xl border border-slate-800 text-left text-sm">
-                            <div><span class="text-slate-400 block text-xs">Batting Style:</span> <strong id="captainPlayerBatting" class="text-white dark:text-white text-slate-900">-</strong></div>
-                            <div><span class="text-slate-400 block text-xs">Bowling Style:</span> <strong id="captainPlayerBowling" class="text-white dark:text-white text-slate-900">-</strong></div>
-                            <div><span class="text-slate-400 block text-xs">Role:</span> <strong id="captainPlayerRole" class="text-emerald-300">-</strong></div>
-                            <div><span class="text-slate-400 block text-xs">Auction Status:</span> <strong id="captainPlayerStatus" class="text-amber-400">-</strong></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl mx-auto bg-slate-900/90 dark:bg-slate-900/90 bg-slate-100 p-6 rounded-3xl border border-slate-800 text-left text-base shadow-inner">
+                            <div><span class="text-slate-400 block text-xs uppercase font-semibold">Batting Style:</span> <strong id="captainPlayerBatting" class="text-white dark:text-white text-slate-900 text-lg">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs uppercase font-semibold">Bowling Style:</span> <strong id="captainPlayerBowling" class="text-white dark:text-white text-slate-900 text-lg">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs uppercase font-semibold">Primary Role:</span> <strong id="captainPlayerRole" class="text-emerald-300 text-lg">-</strong></div>
+                            <div><span class="text-slate-400 block text-xs uppercase font-semibold">Auction Status:</span> <strong id="captainPlayerStatus" class="text-amber-400 text-lg">-</strong></div>
                         </div>
                     </div>
                 </div>
@@ -322,7 +324,7 @@
                 </div>
             </div>
 
-            <!-- Hidden Admin Access Button (Auto hides when admin is logged in) -->
+            <!-- Hidden Admin Access Button -->
             <div id="adminAccessBtnContainer" class="text-center mt-16">
                 <button onclick="showAdminPasswordModal()" class="text-slate-500 hover:text-slate-300 text-xs underline cursor-pointer bg-slate-900/60 dark:bg-slate-900/60 bg-white px-4 py-2 rounded-lg border border-slate-800 shadow">Admin Login / View Hub</button>
             </div>
@@ -330,25 +332,34 @@
         </main>
     </div>
 
-    <!-- SECURE PASSWORD MODAL (MASKED INPUT WITH STARS) -->
+    <!-- SECURE DUAL INPUT LOGIN MODAL (EMAIL & PASSWORD VIA FIREBASE AUTH) -->
     <div id="passwordModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-sky-500/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
             <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center mx-auto mb-2">
                 <i data-lucide="lock" class="w-6 h-6"></i>
             </div>
-            <h3 id="modalTitle" class="text-xl font-bold font-cricket text-white uppercase">Enter Password</h3>
-            <p id="modalDesc" class="text-xs text-slate-400">Please enter the security password to proceed.</p>
+            <h3 id="modalTitle" class="text-xl font-bold font-cricket text-white uppercase">User Login</h3>
+            <p id="modalDesc" class="text-xs text-slate-400">Please enter your credentials to proceed.</p>
             
-            <input type="password" id="modalPasswordInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-3 text-white text-center tracking-widest outline-none text-sm">
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="modalEmailInput" placeholder="Enter email..." class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-2.5 text-white text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Password</label>
+                    <input type="password" id="modalPasswordInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-2.5 text-white text-sm outline-none">
+                </div>
+            </div>
             
             <div class="flex gap-3 pt-2">
-                <button onclick="verifyPassword()" class="w-1/2 bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer transition">Submit</button>
+                <button onclick="verifyPassword()" class="w-1/2 bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer transition">Login</button>
                 <button onclick="closePasswordModal()" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl text-xs cursor-pointer transition">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- AUCTION EDIT MODAL FOR ADMIN WITH DYNAMIC TEAM DROPDOWN -->
+    <!-- AUCTION EDIT MODAL FOR ADMIN -->
     <div id="auctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
             <h3 class="text-xl font-bold font-cricket text-emerald-400 uppercase border-b border-slate-800 pb-2">Update Auction Details</h3>
@@ -366,7 +377,7 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Sold Team Name (Dynamic)</label>
                     <select id="modalTeam" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none text-sm">
-                        <!-- Populated dynamically from admin created teams list -->
+                        <!-- Populated dynamically -->
                     </select>
                 </div>
                 <div>
@@ -412,7 +423,7 @@
         </div>
     </div>
 
-    <!-- Developer Credit Footer -->
+    <!-- Developer Credit Footer (Without 'with') -->
     <footer class="mt-20 py-6 text-center border-t border-slate-900 text-slate-500 text-xs">
         <p>Designed & Developed ❤️ by <span class="text-emerald-400 font-semibold">Ayush Gupta</span></p>
     </footer>
@@ -421,6 +432,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCcuJVNX8nm2njXA8np46a3Xcis13xr4",
@@ -434,9 +446,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         let studentPhotoData = '';
         let allRegistrationsCache = [];
+        let currentAuthCallback = null;
+        window.isCaptainAuthenticated = false;
 
         lucide.createIcons();
         document.addEventListener('DOMContentLoaded', () => {
@@ -519,10 +534,10 @@
             } catch(e) { alert("Failed to toggle registration status."); }
         }
 
-        // TAB SWITCHING WITH PASSWORD PROTECTION FOR CAPTAINS' VIEW
+        // TAB SWITCHING WITH FIREBASE AUTH DUAL POPUP FOR CAPTAIN
         window.switchTab = function(tabName) {
             if(tabName === 'captain-view' && !window.isCaptainAuthenticated) {
-                showPasswordModal("Captain Access", "Enter Captain Password to Access Live Screen:", "CURAJ_CAPTAIN", () => {
+                showPasswordModal("Captain Login", "Enter Captain Email and Password to Access Live Screen:", () => {
                     window.isCaptainAuthenticated = true;
                     alert('Access Granted! Welcome Captain.');
                     executeTabSwitch(tabName);
@@ -552,9 +567,9 @@
             if(tabName === 'public-auction') loadPublicAuction();
         }
 
-        // MASKED PASSWORD MODAL FUNCTIONS
+        // ADMIN LOGIN MODAL WITH FIREBASE AUTH DUAL POPUP
         window.showAdminPasswordModal = function() {
-            showPasswordModal("Admin Login", "Enter Admin Password:", "ADMIN_AYUSH6200", () => {
+            showPasswordModal("Admin Login", "Enter Admin Email and Password:", () => {
                 const adminSec = document.getElementById('adminSection');
                 const btnContainer = document.getElementById('adminAccessBtnContainer');
                 if(adminSec) adminSec.classList.remove('hidden');
@@ -566,30 +581,48 @@
             });
         }
 
-        function showPasswordModal(title, desc, correctPass, callback) {
+        function showPasswordModal(title, desc, callback) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalEmailInput').value = '';
             document.getElementById('modalPasswordInput').value = '';
             document.getElementById('passwordModal').classList.remove('hidden');
-            document.getElementById('modalPasswordInput').focus();
-            window.currentAuthCallback = { correctPass, callback };
+            document.getElementById('modalEmailInput').focus();
+            currentAuthCallback = { callback };
         }
 
         window.closePasswordModal = function() {
             document.getElementById('passwordModal').classList.add('hidden');
-            window.currentAuthCallback = null;
+            currentAuthCallback = null;
         }
 
-        window.verifyPassword = function() {
-            const inputEl = document.getElementById('modalPasswordInput');
-            const enteredVal = inputEl ? inputEl.value.trim() : '';
-            if(window.currentAuthCallback && enteredVal === window.currentAuthCallback.correctPass) {
-                const cb = window.currentAuthCallback.callback;
-                closePasswordModal();
-                cb();
-            } else {
-                alert('Incorrect Password! Please try again.');
-                if(inputEl) { inputEl.value = ''; inputEl.focus(); }
+        // SECURE FIREBASE AUTHENTICATION VERIFICATION (EMAIL + PASSWORD)
+        window.verifyPassword = async function() {
+            const emailInput = document.getElementById('modalEmailInput');
+            const passInput = document.getElementById('modalPasswordInput');
+            
+            const enteredEmail = emailInput ? emailInput.value.trim() : '';
+            const enteredPass = passInput ? passInput.value.trim() : '';
+
+            if(!enteredEmail || !enteredPass) {
+                alert('कृपया ईमेल और पासवर्ड दोनों दर्ज करें।');
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, enteredEmail, enteredPass);
+                if (currentAuthCallback && currentAuthCallback.callback) {
+                    const cb = currentAuthCallback.callback;
+                    closePasswordModal();
+                    cb();
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                alert('गलत ईमेल या पासवर्ड! कृपया जांचें और पुनः प्रयास करें।');
+                if(passInput) {
+                    passInput.value = '';
+                    passInput.focus();
+                }
             }
         }
 
@@ -830,7 +863,6 @@
                     if(roleEl) roleEl.innerText = player.role || '-';
                     if(statusEl) statusEl.innerText = player.auctionStatus || 'Pending';
                 } else {
-                    // Default Blank State if no active broadcast
                     if(photoEl) photoEl.classList.add('hidden');
                     if(placeholderEl) placeholderEl.classList.remove('hidden');
                     if(nameEl) nameEl.innerText = "Waiting for Admin to Broadcast...";
@@ -896,7 +928,6 @@
                 let teamsList = [];
                 teamsSnap.forEach(t => teamsList.push({ id: t.id, ...t.data() }));
 
-                // NO DEFAULT TEAMS: Clean start, only admin created teams appear.
                 let soldPlayersMap = {};
                 regSnap.forEach(r => {
                     const p = r.data();
