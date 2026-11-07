@@ -658,11 +658,26 @@
             const emailInput = document.getElementById('modalEmailInput');
             const passInput = document.getElementById('modalPasswordInput');
             
-            const enteredEmail = emailInput ? emailInput.value.trim() : '';
+            const enteredEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
             const enteredPass = passInput ? passInput.value.trim() : '';
 
             if(!enteredEmail || !enteredPass) {
-                alert('कृपया ईमेल और पासवर्ड दोनों दर्ज करें।');
+                alert('Please enter both email and password.');
+                return;
+            }
+
+            const modalTitleText = document.getElementById('modalTitle').innerText.toLowerCase();
+            const isAdminModal = modalTitleText.includes('admin');
+
+            if(isAdminModal && enteredEmail !== 'mrayushgupta3@gmail.com') {
+                alert('Access Denied! This login is restricted to Admin only.');
+                if(passInput) { passInput.value = ''; passInput.focus(); }
+                return;
+            }
+
+            if(!isAdminModal && enteredEmail === 'mrayushgupta3@gmail.com') {
+                alert('Access Denied! Please use Captain credentials for Captain screen.');
+                if(passInput) { passInput.value = ''; passInput.focus(); }
                 return;
             }
 
@@ -675,7 +690,7 @@
                 }
             } catch (error) {
                 console.error("Auth error:", error);
-                alert('Invalid Email or password ! Please check and try again...');
+                alert('Invalid Email or Password! Please check and try again.');
                 if(passInput) {
                     passInput.value = '';
                     passInput.focus();
